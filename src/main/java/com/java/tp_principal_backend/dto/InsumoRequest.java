@@ -12,4 +12,6 @@ public class InsumoRequest {
     private String marca;
     private String unidad;
     private BigDecimal stock;
+    private String lote;
+    private Integer umbralMinimoStock;
 }

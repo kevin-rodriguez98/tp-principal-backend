@@ -26,10 +26,10 @@ public class InsumosServicesImpl implements InsumosServices {
         insumo.setMarca(request.getMarca());
         insumo.setUnidad(request.getUnidad());
         insumo.setStock(request.getStock());
-        // Campos generados automáticamente
-        insumo.setLote("L" + System.currentTimeMillis());
-        insumo.setUmbralMinimoStock(0);
-
+        insumo.setLote(request.getLote());
+        if (request.getUmbralMinimoStock() != null) {
+            insumo.setUmbralMinimoStock(request.getUmbralMinimoStock());
+        }
         return insumosDao.save(insumo);
     }
 
