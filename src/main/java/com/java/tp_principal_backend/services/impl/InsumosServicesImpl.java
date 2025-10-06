@@ -5,6 +5,7 @@ import com.java.tp_principal_backend.dto.InsumoRequest;
 import com.java.tp_principal_backend.model.Insumo;
 import com.java.tp_principal_backend.services.InsumosServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,6 +75,7 @@ public class InsumosServicesImpl implements InsumosServices {
     }
 
     @Override
+    @Transactional
     public void eliminarInsumo(String codigo) {
         if (!insumosDao.findByCodigo(codigo).isPresent()) {
             throw new RuntimeException("Insumo no encontrado");
