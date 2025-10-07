@@ -4,6 +4,7 @@ import com.java.tp_principal_backend.data.InsumosDao;
 import com.java.tp_principal_backend.dto.InsumoRequest;
 import com.java.tp_principal_backend.model.Insumo;
 import com.java.tp_principal_backend.services.InsumosServices;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class InsumosServicesImpl implements InsumosServices {
 
     @Autowired
@@ -19,6 +21,11 @@ public class InsumosServicesImpl implements InsumosServices {
 
     @Override
     public Insumo agregarInsumo(InsumoRequest request) {
+        if (insumosDao.findByCodigo(request.getCodigo()).isPresent()) {
+            log.info("El insumo con código {} ya se encuentra dado de alta", request.getCodigo());
+            throw new RuntimeException("Error al agregar insumo");
+        }
+
         Insumo insumo = new Insumo();
         insumo.setCodigo(request.getCodigo());
         insumo.setNombre(request.getNombre());

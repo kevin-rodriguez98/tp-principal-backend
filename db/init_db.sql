@@ -9,10 +9,25 @@ CREATE TABLE insumo (
     categoria VARCHAR(50) NOT NULL,
     marca VARCHAR(50) NOT NULL,
     unidad VARCHAR(10) NOT NULL,
-    stock DECIMAL(10,2) DEFAULT 0 CHECK (stock >= 0),
+    stock DECIMAL(10,2) DEFAULT 0,
     lote VARCHAR(20) NOT NULL,
     umbral_minimo_stock INT DEFAULT 0 CHECK (umbral_minimo_stock >= 0),
     UNIQUE (codigo)
+);
+
+CREATE TABLE movimiento_insumo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codigo VARCHAR(50) NOT NULL,
+    nombre VARCHAR(50),
+    categoria VARCHAR(50),
+    marca VARCHAR(50),
+    unidad VARCHAR(10),
+    stock DECIMAL(10,2) DEFAULT 0,
+    lote VARCHAR(20),
+    umbral_minimo_stock INT DEFAULT 0,
+    tipo VARCHAR(20), -- ingreso o egreso
+    impactado BOOLEAN,
+    creation_username VARCHAR(50)
 );
 
 INSERT INTO insumo (codigo, nombre, categoria, marca, unidad, stock, lote) VALUES
