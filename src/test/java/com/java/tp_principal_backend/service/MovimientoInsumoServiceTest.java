@@ -31,10 +31,9 @@ public class MovimientoInsumoServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // === CASO 1: Crear movimiento con insumo inexistente pero con datos completos ===
+    // === CASO 1: Crear insumo inexistente (ingreso correcto) ===
     @Test
     void agregarMovimiento_creaNuevoInsumoYMovimiento() {
-        // Arrange
         MovimientoInsumoRequest request = new MovimientoInsumoRequest();
         request.setCodigo("A001");
         request.setTipo("ingreso");
@@ -44,47 +43,42 @@ public class MovimientoInsumoServiceTest {
         request.setMarca("ACME");
         request.setUnidad("kg");
         request.setLote("L123");
+        request.setProveedor("Proveedor X");
 
         when(insumosDao.findByCodigo("A001")).thenReturn(Optional.empty());
         when(insumosDao.save(any(Insumo.class))).thenAnswer(i -> i.getArgument(0));
         when(movimientoDao.save(any(MovimientoInsumo.class))).thenAnswer(i -> i.getArgument(0));
 
-        // Act
         MovimientoInsumo movimiento = movimientoService.agregarMovimiento(request);
 
-        // Assert
         assertTrue(movimiento.getImpactado());
         assertEquals("A001", movimiento.getCodigo());
-        verify(insumosDao, times(1)).save(any(Insumo.class));
-        verify(movimientoDao, times(1)).save(any(MovimientoInsumo.class));
+        verify(insumosDao).save(any(Insumo.class));
+        verify(movimientoDao).save(any(MovimientoInsumo.class));
     }
 
-    // === CASO 2: Intentar crear insumo sin datos suficientes ===
+    // === CASO 2: Faltan datos para crear un nuevo insumo ===
     @Test
     void agregarMovimiento_faltanDatosInsumoNoCreado() {
-        // Arrange
         MovimientoInsumoRequest request = new MovimientoInsumoRequest();
         request.setCodigo("A002");
         request.setTipo("ingreso");
-        request.setStock(BigDecimal.TEN);
-        // faltan nombre, marca, unidad, etc.
+        request.setStock(BigDecimal.ONE);
+        // Falta proveedor, nombre, etc.
 
         when(insumosDao.findByCodigo("A002")).thenReturn(Optional.empty());
         when(movimientoDao.save(any(MovimientoInsumo.class))).thenAnswer(i -> i.getArgument(0));
 
-        // Act
         MovimientoInsumo movimiento = movimientoService.agregarMovimiento(request);
 
-        // Assert
         assertFalse(movimiento.getImpactado());
         verify(insumosDao, never()).save(any());
         verify(movimientoDao).save(any());
     }
 
-    // === CASO 3: Actualizar insumo existente con ingreso ===
+    // === CASO 3: Ingreso sobre insumo existente ===
     @Test
     void agregarMovimiento_actualizaStockPorIngreso() {
-        // Arrange
         Insumo insumoExistente = new Insumo();
         insumoExistente.setCodigo("A003");
         insumoExistente.setStock(BigDecimal.valueOf(5));
@@ -98,73 +92,53 @@ public class MovimientoInsumoServiceTest {
         when(insumosDao.save(any(Insumo.class))).thenAnswer(i -> i.getArgument(0));
         when(movimientoDao.save(any(MovimientoInsumo.class))).thenAnswer(i -> i.getArgument(0));
 
-        // Act
         MovimientoInsumo movimiento = movimientoService.agregarMovimiento(request);
 
-        // Assert
         assertTrue(movimiento.getImpactado());
         assertEquals(BigDecimal.valueOf(15), insumoExistente.getStock());
         verify(insumosDao).save(insumoExistente);
         verify(movimientoDao).save(any());
     }
 
-    // === CASO 4: Actualizar insumo existente con egreso ===
+    // === CASO 4: Egreso correcto con destino ===
     @Test
-    void agregarMovimiento_actualizaStockPorEgreso() {
-        // Arrange
-        Insumo insumoExistente = new Insumo();
-        insumoExistente.setCodigo("A004");
-        insumoExistente.setStock(BigDecimal.valueOf(20));
-
+    void agregarMovimiento_registraEgresoCorrectamente() {
         MovimientoInsumoRequest request = new MovimientoInsumoRequest();
         request.setCodigo("A004");
         request.setTipo("egreso");
-        request.setStock(BigDecimal.valueOf(5));
+        request.setStock(BigDecimal.valueOf(3));
+        request.setDestino("Producción");
 
-        when(insumosDao.findByCodigo("A004")).thenReturn(Optional.of(insumoExistente));
-        when(insumosDao.save(any(Insumo.class))).thenAnswer(i -> i.getArgument(0));
         when(movimientoDao.save(any(MovimientoInsumo.class))).thenAnswer(i -> i.getArgument(0));
 
-        // Act
         MovimientoInsumo movimiento = movimientoService.agregarMovimiento(request);
 
-        // Assert
         assertTrue(movimiento.getImpactado());
-        assertEquals(BigDecimal.valueOf(15), insumoExistente.getStock());
-        verify(insumosDao).save(insumoExistente);
+        assertEquals("egreso", movimiento.getTipo());
         verify(movimientoDao).save(any());
+        verify(insumosDao, never()).save(any());
     }
 
-    // === CASO 5: Egreso mayor al stock disponible (log de advertencia) ===
+    // === CASO 5: Egreso sin destino → error capturado ===
     @Test
-    void agregarMovimiento_egresoMayorQueStock() {
-        // Arrange
-        Insumo insumoExistente = new Insumo();
-        insumoExistente.setCodigo("A005");
-        insumoExistente.setStock(BigDecimal.valueOf(3));
-
+    void agregarMovimiento_egresoSinDestino() {
         MovimientoInsumoRequest request = new MovimientoInsumoRequest();
         request.setCodigo("A005");
         request.setTipo("egreso");
-        request.setStock(BigDecimal.valueOf(10));
+        request.setStock(BigDecimal.valueOf(2));
 
-        when(insumosDao.findByCodigo("A005")).thenReturn(Optional.of(insumoExistente));
-        when(insumosDao.save(any(Insumo.class))).thenAnswer(i -> i.getArgument(0));
         when(movimientoDao.save(any(MovimientoInsumo.class))).thenAnswer(i -> i.getArgument(0));
 
-        // Act
         MovimientoInsumo movimiento = movimientoService.agregarMovimiento(request);
 
-        // Assert
-        assertTrue(movimiento.getImpactado());
-        assertEquals(BigDecimal.valueOf(-7), insumoExistente.getStock());
-        verify(insumosDao).save(insumoExistente);
+        assertFalse(movimiento.getImpactado());
+        verify(movimientoDao).save(any());
+        verify(insumosDao, never()).save(any());
     }
 
-    // === CASO 6: Error al guardar insumo o movimiento ===
+    // === CASO 6: Error al guardar movimiento (excepción capturada) ===
     @Test
-    void agregarMovimiento_errorAlGuardar() {
-        // Arrange
+    void agregarMovimiento_errorAlGuardarMovimiento() {
         MovimientoInsumoRequest request = new MovimientoInsumoRequest();
         request.setCodigo("A006");
         request.setTipo("ingreso");
@@ -174,15 +148,14 @@ public class MovimientoInsumoServiceTest {
         request.setMarca("Marca");
         request.setUnidad("U");
         request.setLote("L1");
+        request.setProveedor("Prov");
 
         when(insumosDao.findByCodigo("A006")).thenReturn(Optional.empty());
-        when(insumosDao.save(any(Insumo.class))).thenThrow(new RuntimeException("Falla DB"));
-        when(movimientoDao.save(any(MovimientoInsumo.class))).thenAnswer(i -> i.getArgument(0));
+        when(insumosDao.save(any(Insumo.class))).thenAnswer(i -> i.getArgument(0));
+        when(movimientoDao.save(any(MovimientoInsumo.class))).thenThrow(new RuntimeException("Error DB"));
 
-        // Act
         MovimientoInsumo movimiento = movimientoService.agregarMovimiento(request);
 
-        // Assert
         assertFalse(movimiento.getImpactado());
         verify(insumosDao).save(any());
         verify(movimientoDao).save(any());

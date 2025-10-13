@@ -89,4 +89,9 @@ public class InsumosServicesImpl implements InsumosServices {
         }
         insumosDao.deleteByCodigo(codigo);
     }
+
+    @Override
+    public List<Insumo> obtenerTodosLosInsumosConBajoStock() {
+        return insumosDao.findInsumoBajoStock();
+    }
 }

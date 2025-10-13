@@ -30,6 +30,16 @@ CREATE TABLE movimiento_insumo (
     creation_username VARCHAR(50)
 );
 
+-- Agregar columnas a la tabla insumo
+ALTER TABLE insumo
+ADD COLUMN proveedor VARCHAR(100) NULL,
+ADD COLUMN destino VARCHAR(100) NULL;
+
+-- Agregar columnas a la tabla movimiento_insumo
+ALTER TABLE movimiento_insumo
+ADD COLUMN proveedor VARCHAR(100) NULL,
+ADD COLUMN destino VARCHAR(100) NULL;
+
 INSERT INTO insumo (codigo, nombre, categoria, marca, unidad, stock, lote) VALUES
 ('101', 'Leche', 'Lácteos', 'La Serenísima', 'Litro', 100, 'L001'),
 ('102', 'Leche', 'Lácteos', 'Sancor', 'Litro', 80, 'L002'),

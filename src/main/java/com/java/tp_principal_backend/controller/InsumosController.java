@@ -42,4 +42,10 @@ public class InsumosController {
         insumosServices.eliminarInsumo(codigo);
         return ResponseEntity.ok("Insumo eliminado correctamente");
     }
+
+    @GetMapping("/obtener-bajo-stock")
+    public ResponseEntity<List<Insumo>> obtenerInsumosConBajoStock() {
+        List<Insumo> insumosBajoStock = insumosServices.obtenerTodosLosInsumosConBajoStock();
+        return ResponseEntity.ok(insumosBajoStock);
+    }
 }

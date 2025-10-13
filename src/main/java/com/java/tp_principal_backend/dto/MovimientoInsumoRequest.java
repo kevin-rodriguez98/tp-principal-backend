@@ -14,4 +14,6 @@ public class MovimientoInsumoRequest {
     private String marca;
     private String unidad;
     private String lote;
+    private String proveedor;
+    private String destino;
 }

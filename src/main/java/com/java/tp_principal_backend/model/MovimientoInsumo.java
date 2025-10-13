@@ -50,4 +50,10 @@ public class MovimientoInsumo {
 
     @Column(name = "creation_username")
     private String creationUsername;
+
+    @Column
+    private String proveedor;
+
+    @Column
+    private String destino;
 }

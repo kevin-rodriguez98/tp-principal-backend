@@ -41,4 +41,10 @@ public class Insumo {
 
     @Column(name = "umbral_minimo_stock", nullable = false)
     private Integer umbralMinimoStock = 0;
+
+    @Column
+    private String proveedor;
+
+    @Column
+    private String destino;
 }

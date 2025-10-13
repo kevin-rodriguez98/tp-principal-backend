@@ -15,4 +15,6 @@ public interface InsumosServices {
     Insumo editarInsumo(String codigo, Map<String, Object> cambios);
 
     void eliminarInsumo(String codigo);
+
+    List<Insumo> obtenerTodosLosInsumosConBajoStock();
 }

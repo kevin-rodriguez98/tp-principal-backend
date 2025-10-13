@@ -27,4 +27,16 @@ public class MovimientoInsumoController {
         List<MovimientoInsumo> movimientos = movimientoService.obtenerTodosLosMovimientos();
         return ResponseEntity.ok(movimientos);
     }
+
+    @GetMapping("/obtener-egreso")
+    public ResponseEntity<List<MovimientoInsumo>> obtenerEgreso() {
+        List<MovimientoInsumo> egresos = movimientoService.obtenerTodosLosEgresos();
+        return ResponseEntity.ok(egresos);
+    }
+
+    @GetMapping("/obtener-ingreso")
+    public ResponseEntity<List<MovimientoInsumo>> obtenerIngreso() {
+        List<MovimientoInsumo> ingresos = movimientoService.obtenerTodosLosIngresos();
+        return ResponseEntity.ok(ingresos);
+    }
 }

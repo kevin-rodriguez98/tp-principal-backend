@@ -33,79 +33,107 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
     @Override
     @Transactional
     public MovimientoInsumo agregarMovimiento(MovimientoInsumoRequest request) {
-        boolean impactado = false;
+        MovimientoInsumo movimiento;
 
         try {
-            Insumo insumo = insumosDao.findByCodigo(request.getCodigo()).orElse(null);
-
-            // Si no existe el insumo y faltan campos, loggear
-            if (insumo == null) {
-                if (request.getNombre() == null || request.getCategoria() == null ||
-                        request.getMarca() == null || request.getUnidad() == null || request.getLote() == null) {
-                    System.out.println("Faltan datos para crear el insumo con código " + request.getCodigo());
-                    impactado = false;
-                } else {
-                    insumo = new Insumo();
-                    insumo.setCodigo(request.getCodigo());
-                    insumo.setNombre(request.getNombre());
-                    insumo.setCategoria(request.getCategoria());
-                    insumo.setMarca(request.getMarca());
-                    insumo.setUnidad(request.getUnidad());
-                    insumo.setLote(request.getLote());
-                    insumo.setStock(request.getStock());
-                    insumo.setUmbralMinimoStock(0);
-                    insumosDao.save(insumo);
-                    impactado = true;
-                }
-            } else {
-                // Actualizar stock existente
-                BigDecimal nuevoStock = insumo.getStock();
-                if ("ingreso".equalsIgnoreCase(request.getTipo())) {
-                    nuevoStock = nuevoStock.add(request.getStock());
-                } else if ("egreso".equalsIgnoreCase(request.getTipo())) {
-                    nuevoStock = nuevoStock.subtract(request.getStock());
-
-                    if (nuevoStock.compareTo(BigDecimal.ZERO) < 0) {
-                        // Loguear que se egresó más que el disponible
-                        System.out.println("¡Atención! Se egresó más stock del disponible para el código: "
-                                + request.getCodigo() + ". Stock actual: " + insumo.getStock()
-                                + ", egreso: " + request.getStock());
-                    }
-                }
-                insumo.setStock(nuevoStock);
-                insumosDao.save(insumo);
-                impactado = true;
+            switch (request.getTipo().toLowerCase()) {
+                case "ingreso" -> movimiento = procesarIngreso(request);
+                case "egreso" -> movimiento = procesarEgreso(request);
+                default -> throw new IllegalArgumentException("El tipo de movimiento debe ser 'ingreso' o 'egreso'.");
             }
         } catch (Exception e) {
-            log.info("No se pudo dar de alta o actualizar el insumo: " + e.getMessage());
-            impactado = false;
+            log.error("Error al procesar el movimiento: {}", e.getMessage());
+            movimiento = crearMovimientoBase(request, false);
         }
 
-        MovimientoInsumo movimiento = new MovimientoInsumo();
         try {
-            movimiento.setCodigo(request.getCodigo());
-            movimiento.setTipo(request.getTipo());
-            movimiento.setStock(request.getStock());
-            movimiento.setImpactado(impactado);
-            movimiento.setCreationUsername(randomUsername());
-            // Setear otros campos si existen
-            movimiento.setNombre(request.getNombre());
-            movimiento.setCategoria(request.getCategoria());
-            movimiento.setMarca(request.getMarca());
-            movimiento.setUnidad(request.getUnidad());
-            movimiento.setLote(request.getLote());
-
             movimientoDao.save(movimiento);
         } catch (Exception e) {
-            log.info("No se pudo guardar el movimiento: " + e.getMessage());
+            log.error("No se pudo guardar el movimiento: {}", e.getMessage());
             movimiento.setImpactado(false);
         }
 
         return movimiento;
     }
 
+    private MovimientoInsumo procesarIngreso(MovimientoInsumoRequest request) {
+        Insumo insumo = insumosDao.findByCodigo(request.getCodigo()).orElse(null);
+        boolean impactado = false;
+
+        if (insumo == null) {
+            // Validar proveedor
+            if (request.getProveedor() == null || request.getProveedor().isBlank()) {
+                throw new IllegalArgumentException("El campo 'proveedor' no puede estar vacío para crear un nuevo insumo.");
+            }
+
+            // Validar datos mínimos
+            if (request.getNombre() == null || request.getCategoria() == null ||
+                    request.getMarca() == null || request.getUnidad() == null || request.getLote() == null) {
+                throw new IllegalArgumentException("Faltan datos para crear el insumo con código " + request.getCodigo());
+            }
+
+            insumo = new Insumo();
+            insumo.setCodigo(request.getCodigo());
+            insumo.setNombre(request.getNombre());
+            insumo.setCategoria(request.getCategoria());
+            insumo.setMarca(request.getMarca());
+            insumo.setUnidad(request.getUnidad());
+            insumo.setLote(request.getLote());
+            insumo.setProveedor(request.getProveedor());
+            insumo.setDestino(request.getDestino());
+            insumo.setStock(request.getStock());
+            insumo.setUmbralMinimoStock(0);
+            insumosDao.save(insumo);
+            impactado = true;
+        } else {
+            // El insumo ya existe → sumamos stock
+            BigDecimal nuevoStock = insumo.getStock().add(request.getStock());
+            insumo.setStock(nuevoStock);
+            insumosDao.save(insumo);
+            impactado = true;
+        }
+
+        return crearMovimientoBase(request, impactado);
+    }
+
+    private MovimientoInsumo procesarEgreso(MovimientoInsumoRequest request) {
+        if (request.getDestino() == null || request.getDestino().isBlank()) {
+            throw new IllegalArgumentException("El campo 'destino' no puede estar vacío para un egreso.");
+        }
+
+        // No se modifica el insumo, solo se registra el movimiento
+        return crearMovimientoBase(request, true);
+    }
+
+    private MovimientoInsumo crearMovimientoBase(MovimientoInsumoRequest request, boolean impactado) {
+        MovimientoInsumo movimiento = new MovimientoInsumo();
+        movimiento.setCodigo(request.getCodigo());
+        movimiento.setTipo(request.getTipo());
+        movimiento.setStock(request.getStock());
+        movimiento.setImpactado(impactado);
+        movimiento.setCreationUsername(randomUsername());
+        movimiento.setNombre(request.getNombre());
+        movimiento.setCategoria(request.getCategoria());
+        movimiento.setMarca(request.getMarca());
+        movimiento.setUnidad(request.getUnidad());
+        movimiento.setLote(request.getLote());
+        movimiento.setProveedor(request.getProveedor());
+        movimiento.setDestino(request.getDestino());
+        return movimiento;
+    }
+
     @Override
     public List<MovimientoInsumo> obtenerTodosLosMovimientos() {
         return movimientoDao.findAll();
+    }
+
+    @Override
+    public List<MovimientoInsumo> obtenerTodosLosEgresos() {
+        return movimientoDao.findByTipoIgnoreCase("egreso");
+    }
+
+    @Override
+    public List<MovimientoInsumo> obtenerTodosLosIngresos() {
+        return movimientoDao.findByTipoIgnoreCase("ingreso");
     }
 }
