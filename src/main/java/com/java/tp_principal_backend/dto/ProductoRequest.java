@@ -5,14 +5,12 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class MovimientoInsumoRequest {
+public class ProductoRequest {
     private String codigo;
-    private String tipo;
-    private BigDecimal stock;
     private String nombre;
     private String categoria;
     private String marca;
     private String unidad;
+    private BigDecimal stock;
     private String lote;
-    private String proveedor;
 }

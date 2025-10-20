@@ -36,11 +36,11 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
         MovimientoInsumo movimiento;
 
         try {
-            switch (request.getTipo().toLowerCase()) {
-                case "ingreso" -> movimiento = procesarIngreso(request);
-                case "egreso" -> movimiento = procesarEgreso(request);
-                default -> throw new IllegalArgumentException("El tipo de movimiento debe ser 'ingreso' o 'egreso'.");
+            // Solo ingreso
+            if (!"ingreso".equalsIgnoreCase(request.getTipo())) {
+                throw new IllegalArgumentException("Solo se permite tipo 'ingreso'.");
             }
+            movimiento = procesarIngreso(request);
         } catch (Exception e) {
             log.error("Error al procesar el movimiento: {}", e.getMessage());
             movimiento = crearMovimientoBase(request, false);
@@ -80,7 +80,6 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
             insumo.setUnidad(request.getUnidad());
             insumo.setLote(request.getLote());
             insumo.setProveedor(request.getProveedor());
-            insumo.setDestino(request.getDestino());
             insumo.setStock(request.getStock());
             insumo.setUmbralMinimoStock(0);
             insumosDao.save(insumo);
@@ -96,15 +95,6 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
         return crearMovimientoBase(request, impactado);
     }
 
-    private MovimientoInsumo procesarEgreso(MovimientoInsumoRequest request) {
-        if (request.getDestino() == null || request.getDestino().isBlank()) {
-            throw new IllegalArgumentException("El campo 'destino' no puede estar vacío para un egreso.");
-        }
-
-        // No se modifica el insumo, solo se registra el movimiento
-        return crearMovimientoBase(request, true);
-    }
-
     private MovimientoInsumo crearMovimientoBase(MovimientoInsumoRequest request, boolean impactado) {
         MovimientoInsumo movimiento = new MovimientoInsumo();
         movimiento.setCodigo(request.getCodigo());
@@ -118,18 +108,12 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
         movimiento.setUnidad(request.getUnidad());
         movimiento.setLote(request.getLote());
         movimiento.setProveedor(request.getProveedor());
-        movimiento.setDestino(request.getDestino());
         return movimiento;
     }
 
     @Override
     public List<MovimientoInsumo> obtenerTodosLosMovimientos() {
         return movimientoDao.findAll();
-    }
-
-    @Override
-    public List<MovimientoInsumo> obtenerTodosLosEgresos() {
-        return movimientoDao.findByTipoIgnoreCase("egreso");
     }
 
     @Override

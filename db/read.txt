@@ -1,4 +1,0 @@
-orden de creacion de bds por conflictos
-1. fl_usuarios
-2. fl_insumos
-3. fl_registros_stock

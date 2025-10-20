@@ -8,6 +8,5 @@ import java.util.List;
 public interface MovimientoInsumoService {
     MovimientoInsumo agregarMovimiento(MovimientoInsumoRequest request);
     List<MovimientoInsumo> obtenerTodosLosMovimientos();
-    List<MovimientoInsumo> obtenerTodosLosEgresos();
     List<MovimientoInsumo> obtenerTodosLosIngresos();
 }

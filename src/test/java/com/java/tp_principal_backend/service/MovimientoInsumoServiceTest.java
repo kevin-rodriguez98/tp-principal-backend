@@ -100,42 +100,6 @@ public class MovimientoInsumoServiceTest {
         verify(movimientoDao).save(any());
     }
 
-    // === CASO 4: Egreso correcto con destino ===
-    @Test
-    void agregarMovimiento_registraEgresoCorrectamente() {
-        MovimientoInsumoRequest request = new MovimientoInsumoRequest();
-        request.setCodigo("A004");
-        request.setTipo("egreso");
-        request.setStock(BigDecimal.valueOf(3));
-        request.setDestino("Producción");
-
-        when(movimientoDao.save(any(MovimientoInsumo.class))).thenAnswer(i -> i.getArgument(0));
-
-        MovimientoInsumo movimiento = movimientoService.agregarMovimiento(request);
-
-        assertTrue(movimiento.getImpactado());
-        assertEquals("egreso", movimiento.getTipo());
-        verify(movimientoDao).save(any());
-        verify(insumosDao, never()).save(any());
-    }
-
-    // === CASO 5: Egreso sin destino → error capturado ===
-    @Test
-    void agregarMovimiento_egresoSinDestino() {
-        MovimientoInsumoRequest request = new MovimientoInsumoRequest();
-        request.setCodigo("A005");
-        request.setTipo("egreso");
-        request.setStock(BigDecimal.valueOf(2));
-
-        when(movimientoDao.save(any(MovimientoInsumo.class))).thenAnswer(i -> i.getArgument(0));
-
-        MovimientoInsumo movimiento = movimientoService.agregarMovimiento(request);
-
-        assertFalse(movimiento.getImpactado());
-        verify(movimientoDao).save(any());
-        verify(insumosDao, never()).save(any());
-    }
-
     // === CASO 6: Error al guardar movimiento (excepción capturada) ===
     @Test
     void agregarMovimiento_errorAlGuardarMovimiento() {

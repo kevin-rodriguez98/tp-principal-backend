@@ -8,49 +8,37 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "movimiento_insumo")
+@Table(name = "producto")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MovimientoInsumo {
+public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String codigo;
 
-    @Column
+    @Column(nullable = false)
     private String nombre;
 
-    @Column
+    @Column(nullable = false)
     private String categoria;
 
-    @Column
+    @Column(nullable = false)
     private String marca;
 
-    @Column
+    @Column(nullable = false)
     private String unidad;
 
     @Column(nullable = false)
     private BigDecimal stock = BigDecimal.ZERO;
 
-    @Column
+    @Column(nullable = false)
     private String lote;
-
-    @Column(name = "umbral_minimo_stock")
-    private Integer umbralMinimoStock = 0;
-
-    @Column
-    private String tipo;
-
-    @Column
-    private Boolean impactado;
 
     @Column(name = "creation_username")
     private String creationUsername;
-
-    @Column
-    private String proveedor;
 }
