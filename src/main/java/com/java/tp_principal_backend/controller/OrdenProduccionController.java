@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+@RestController
+@RequestMapping("/orden-produccion")
 public class OrdenProduccionController {
     @Autowired
     private OrdenProduccionService ordenService;

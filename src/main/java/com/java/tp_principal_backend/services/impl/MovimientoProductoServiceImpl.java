@@ -5,10 +5,7 @@ import com.java.tp_principal_backend.data.InsumosDao;
 import com.java.tp_principal_backend.data.MovimientoProductoDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.dto.MovimientoProductoRequest;
-import com.java.tp_principal_backend.model.Insumo;
-import com.java.tp_principal_backend.model.InsumoPorProducto;
-import com.java.tp_principal_backend.model.MovimientoProducto;
-import com.java.tp_principal_backend.model.Producto;
+import com.java.tp_principal_backend.model.*;
 import com.java.tp_principal_backend.services.MovimientoProductoService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,5 +106,10 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
         movimiento.setFecha(LocalDateTime.now());
 
         return movimientoDao.save(movimiento);
+    }
+
+    @Override
+    public List<MovimientoProducto> obtener() {
+        return movimientoDao.findAll();
     }
 }
