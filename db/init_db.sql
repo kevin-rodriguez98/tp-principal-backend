@@ -86,6 +86,14 @@ CREATE TABLE movimiento_producto (
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+--Agrega columnos al movimiento de los productos
+ALTER table movimiento_producto
+ADD COLUMN nombre VARCHAR(50),
+ADD COLUMN categoria VARCHAR(50),
+ADD COLUMN marca VARCHAR(50),
+ADD COLUMN lote VARCHAR(20),
+ADD COLUMN unidad VARCHAR(10);
+
 -- Crea tabla para ordenes de producción
 CREATE TABLE orden_produccion (
     id INT AUTO_INCREMENT PRIMARY KEY,

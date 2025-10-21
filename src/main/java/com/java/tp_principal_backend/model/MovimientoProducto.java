@@ -38,6 +38,21 @@ public class MovimientoProducto {
     @Column(name = "fecha")
     private LocalDateTime fecha;
 
+    @Column(name = "categoria")
+    private String categoria;
+
+    @Column(name = "marca")
+    private String marca;
+
+    @Column(name = "unidad")
+    private String unidad;
+
+    @Column(name = "lote")
+    private String lote;
+
+    @Column(name = "nombre")
+    private String nombre;
+
     // Para setear la fecha automáticamente al crear un registro
     @PrePersist
     public void prePersist() {

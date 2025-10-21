@@ -58,14 +58,19 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
         movimiento.setCreationUsername(randomUsername());
         movimiento.setFecha(LocalDateTime.now());
 
+        // 👇 nuevos campos del request
+        movimiento.setCategoria(request.getCategoria());
+        movimiento.setMarca(request.getMarca());
+        movimiento.setUnidad(request.getUnidad());
+        movimiento.setLote(request.getLote());
+        // Si querés guardar el nombre del producto que llega (no el de la entidad)
+        movimiento.setNombre(request.getNombre());
+
         return movimientoDao.save(movimiento);
     }
 
     /**
      * Resta el stock de los insumos asociados a un producto según la cantidad solicitada.
-     * @param producto Producto a egresar o producir
-     * @param cantidad Cantidad de productos
-     * @return true si todos los insumos se impactaron correctamente, false si alguno no tuvo stock suficiente
      */
     public boolean restarInsumos(Producto producto, BigDecimal cantidad) {
         List<InsumoPorProducto> recetas = recetaDao.findByProductoId(producto.getId());
@@ -92,10 +97,8 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
         Producto producto = productosDao.findByCodigo(codigoProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
-        // Restar insumos usando el método público
         boolean impactado = restarInsumos(producto, cantidad);
 
-        // Crear movimiento de egreso
         MovimientoProducto movimiento = new MovimientoProducto();
         movimiento.setCodigoProducto(codigoProducto);
         movimiento.setCantidad(cantidad);
@@ -104,6 +107,13 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
         movimiento.setDestino(destino);
         movimiento.setCreationUsername(randomUsername());
         movimiento.setFecha(LocalDateTime.now());
+
+        // 👇 seteo de campos adicionales
+        movimiento.setCategoria(producto.getCategoria());
+        movimiento.setMarca(producto.getMarca());
+        movimiento.setUnidad(producto.getUnidad());
+        movimiento.setLote(producto.getLote());
+        movimiento.setNombre(producto.getNombre());
 
         return movimientoDao.save(movimiento);
     }

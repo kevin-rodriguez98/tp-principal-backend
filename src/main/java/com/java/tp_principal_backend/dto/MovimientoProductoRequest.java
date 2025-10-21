@@ -10,4 +10,9 @@ public class MovimientoProductoRequest {
     private BigDecimal cantidad;
     private String tipo;
     private String destino;
+    private String categoria;
+    private String marca;
+    private String unidad;
+    private String lote;
+    private String nombre;
 }
