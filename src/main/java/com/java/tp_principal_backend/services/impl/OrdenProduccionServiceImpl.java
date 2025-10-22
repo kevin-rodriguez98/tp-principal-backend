@@ -2,6 +2,7 @@ package com.java.tp_principal_backend.services.impl;
 
 import com.java.tp_principal_backend.data.OrdenProduccionDao;
 import com.java.tp_principal_backend.data.ProductosDao;
+import com.java.tp_principal_backend.dto.OrdenProduccionNormalRequest;
 import com.java.tp_principal_backend.dto.OrdenProduccionRequest;
 import com.java.tp_principal_backend.model.OrdenProduccion;
 import com.java.tp_principal_backend.model.Producto;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -116,6 +118,30 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
 
         // Cambiar estado a FINALIZADA_ENTREGADA
         orden.setEstado("FINALIZADA_ENTREGADA");
+
+        return ordenDao.save(orden);
+    }
+
+    @Override
+    @Transactional
+    public OrdenProduccion agregarOrdenNormal(OrdenProduccionNormalRequest request) {
+        OrdenProduccion orden = new OrdenProduccion();
+
+        orden.setProductoRequerido(request.getProductoRequerido());
+        orden.setMarca(request.getMarca());
+        orden.setStockRequerido(request.getStockRequerido());
+        orden.setCodigoProducto(request.getCodigoProducto());
+        orden.setFechaEntrega(request.getFechaEntrega());
+        orden.setLote(request.getLote());
+
+        // Valores por defecto o calculados
+        orden.setEstado(
+                request.getEstado() != null ? request.getEstado() : "Evaluación"
+        );
+        orden.setCreationUsername(randomUsername());
+        orden.setFechaCreacion(LocalDateTime.now());
+        orden.setImpactado(false);
+        orden.setStockProducidoReal(BigDecimal.ZERO);
 
         return ordenDao.save(orden);
     }

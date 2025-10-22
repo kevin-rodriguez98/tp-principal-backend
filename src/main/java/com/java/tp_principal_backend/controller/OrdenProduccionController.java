@@ -1,5 +1,6 @@
 package com.java.tp_principal_backend.controller;
 
+import com.java.tp_principal_backend.dto.OrdenProduccionNormalRequest;
 import com.java.tp_principal_backend.dto.OrdenProduccionRequest;
 import com.java.tp_principal_backend.model.OrdenProduccion;
 import com.java.tp_principal_backend.services.OrdenProduccionService;
@@ -16,9 +17,15 @@ public class OrdenProduccionController {
     @Autowired
     private OrdenProduccionService ordenService;
 
-    @PostMapping("/agregar")
+    @PostMapping("/agregarautomatizado")
     public ResponseEntity<OrdenProduccion> agregarOrden(@RequestBody OrdenProduccionRequest request) {
         OrdenProduccion orden = ordenService.agregarOrden(request);
+        return ResponseEntity.ok(orden);
+    }
+
+    @PostMapping("/agregar")
+    public ResponseEntity<OrdenProduccion> agregarOrden(@RequestBody OrdenProduccionNormalRequest request) {
+        OrdenProduccion orden = ordenService.agregarOrdenNormal(request);
         return ResponseEntity.ok(orden);
     }
 
