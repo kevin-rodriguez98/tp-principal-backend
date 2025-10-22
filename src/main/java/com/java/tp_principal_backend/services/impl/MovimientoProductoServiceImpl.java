@@ -122,4 +122,26 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
     public List<MovimientoProducto> obtener() {
         return movimientoDao.findAll();
     }
+
+    @Override
+    @Transactional
+    public MovimientoProducto agregarMovimientoNormal(MovimientoProductoRequest request) {
+        MovimientoProducto movimiento = new MovimientoProducto();
+
+        movimiento.setCodigoProducto(request.getCodigoProducto());
+        movimiento.setCantidad(request.getCantidad());
+        movimiento.setTipo(request.getTipo());
+        movimiento.setDestino(request.getDestino());
+        movimiento.setCategoria(request.getCategoria());
+        movimiento.setMarca(request.getMarca());
+        movimiento.setUnidad(request.getUnidad());
+        movimiento.setLote(request.getLote());
+        movimiento.setNombre(request.getNombre());
+
+        movimiento.setImpactado(false);
+        movimiento.setCreationUsername(randomUsername());
+        movimiento.setFecha(LocalDateTime.now());
+
+        return movimientoDao.save(movimiento);
+    }
 }

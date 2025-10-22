@@ -10,4 +10,5 @@ public interface MovimientoProductoService {
     MovimientoProducto agregarMovimiento(MovimientoProductoRequest request);
     MovimientoProducto egresoAutomatico(String codigoProducto, BigDecimal cantidad, String destino);
     List<MovimientoProducto> obtener();
+    MovimientoProducto agregarMovimientoNormal(MovimientoProductoRequest request);
 }
