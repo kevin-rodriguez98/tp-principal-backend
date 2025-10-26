@@ -2,6 +2,7 @@ package com.java.tp_principal_backend.controller;
 
 import com.java.tp_principal_backend.dto.OrdenProduccionNormalRequest;
 import com.java.tp_principal_backend.dto.OrdenProduccionRequest;
+import com.java.tp_principal_backend.model.HistorialEtapa;
 import com.java.tp_principal_backend.model.OrdenProduccion;
 import com.java.tp_principal_backend.services.OrdenProduccionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +58,44 @@ public class OrdenProduccionController {
     public ResponseEntity<OrdenProduccion> cancelarOrden(@PathVariable Integer ordenId) {
         OrdenProduccion orden = ordenService.marcarCancelada(ordenId);
         return ResponseEntity.ok(orden);
+    }
+
+    @PutMapping("/notificar-etapa/{ordenId}")
+    public ResponseEntity<OrdenProduccion> notificarEtapa(
+            @PathVariable Integer ordenId,
+            @RequestBody String nuevaEtapa) {
+
+        OrdenProduccion ordenActualizada = ordenService.actualizarEtapa(ordenId, nuevaEtapa.trim());
+
+        if (ordenActualizada == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(ordenActualizada);
+    }
+
+    @PutMapping("/agregar-nota/{ordenId}")
+    public ResponseEntity<OrdenProduccion> agregarNota(
+            @PathVariable Integer ordenId,
+            @RequestBody String nota) {
+
+        OrdenProduccion ordenActualizada = ordenService.agregarNota(ordenId, nota.trim());
+
+        if (ordenActualizada == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(ordenActualizada);
+    }
+
+    @GetMapping("/{ordenId}/historial-etapas")
+    public ResponseEntity<List<HistorialEtapa>> obtenerHistorialEtapas(@PathVariable Integer ordenId) {
+        List<HistorialEtapa> historial = ordenService.obtenerHistorialPorOrden(ordenId);
+
+        if (historial.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(historial);
     }
 }

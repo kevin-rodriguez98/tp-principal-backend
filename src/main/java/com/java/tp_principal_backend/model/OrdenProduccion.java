@@ -51,4 +51,10 @@ public class OrdenProduccion {
 
     @Column(name = "impactado")
     private Boolean impactado = false;
+
+    @Column(name = "etapa")
+    private String etapa;
+
+    @Column(name = "nota")
+    private String nota;
 }

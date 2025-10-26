@@ -117,3 +117,20 @@ CREATE TABLE tiempo_produccion (
     tiempo_por_unidad DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (id_producto) REFERENCES producto(id)
 );
+
+ALTER TABLE orden_produccion
+ADD COLUMN nota VARCHAR(100),
+ADD COLUMN etapa VARCHAR(50);
+
+
+--Crea tabla para historial de etapa
+CREATE TABLE historial_etapa (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    orden_id INT NOT NULL,
+    etapa VARCHAR(100) NOT NULL,
+    fecha_cambio DATETIME NOT NULL,
+    usuario VARCHAR(100),
+    CONSTRAINT fk_historial_orden
+        FOREIGN KEY (orden_id) REFERENCES orden_produccion(id)
+        ON DELETE CASCADE
+);

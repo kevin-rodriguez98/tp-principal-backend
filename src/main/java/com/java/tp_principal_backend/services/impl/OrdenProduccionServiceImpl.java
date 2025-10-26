@@ -1,9 +1,11 @@
 package com.java.tp_principal_backend.services.impl;
 
+import com.java.tp_principal_backend.data.HistorialEtapaDao;
 import com.java.tp_principal_backend.data.OrdenProduccionDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.dto.OrdenProduccionNormalRequest;
 import com.java.tp_principal_backend.dto.OrdenProduccionRequest;
+import com.java.tp_principal_backend.model.HistorialEtapa;
 import com.java.tp_principal_backend.model.OrdenProduccion;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.services.OrdenProduccionService;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -24,6 +27,9 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
 
     @Autowired
     private ProductosDao productosDao;
+
+    @Autowired
+    private HistorialEtapaDao historialEtapaDao;
 
     @Autowired
     private MovimientoProductoServiceImpl movimientoProductoService;
@@ -144,5 +150,45 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         orden.setStockProducidoReal(BigDecimal.ZERO);
 
         return ordenDao.save(orden);
+    }
+
+    @Override
+    public OrdenProduccion actualizarEtapa(Integer ordenId, String nuevaEtapa) {
+        Optional<OrdenProduccion> optional = ordenDao.findById(ordenId);
+        if (optional.isEmpty()) {
+            return null;
+        }
+
+        OrdenProduccion orden = optional.get();
+
+        // 🔹 1. Registrar la nueva etapa en el historial
+        HistorialEtapa historial = new HistorialEtapa();
+        historial.setOrden(orden);
+        historial.setEtapa(nuevaEtapa);
+        historial.setFechaCambio(LocalDateTime.now());
+        historialEtapaDao.save(historial);
+
+        // 🔹 2. Actualizar la etapa actual de la orden
+        orden.setEtapa(nuevaEtapa);
+
+        // 🔹 3. Guardar los cambios en la orden
+        return ordenDao.save(orden);
+    }
+
+    @Override
+    public OrdenProduccion agregarNota(Integer ordenId, String nota) {
+        Optional<OrdenProduccion> optional = ordenDao.findById(ordenId);
+        if (optional.isEmpty()) {
+            return null;
+        }
+
+        OrdenProduccion orden = optional.get();
+        orden.setNota(nota);
+        return ordenDao.save(orden);
+    }
+
+    @Override
+    public List<HistorialEtapa> obtenerHistorialPorOrden(Integer ordenId) {
+        return historialEtapaDao.findByOrdenIdOrderByFechaCambioAsc(ordenId);
     }
 }
