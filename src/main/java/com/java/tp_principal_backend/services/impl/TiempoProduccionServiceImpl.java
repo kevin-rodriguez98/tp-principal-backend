@@ -53,7 +53,7 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
 
     @Override
     public BigDecimal obtenerTiempoPorProducto(String codigoProducto) {
-        TiempoProduccion tiempo = tiempoDao.findByProductoCodigoProducto(codigoProducto)
+        TiempoProduccion tiempo = tiempoDao.findByProductoCodigo(codigoProducto)
                 .orElseThrow(() -> new EntityNotFoundException("No se encontró tiempo de producción para el producto con código: " + codigoProducto));
         return tiempo.getTiempoPorUnidad();
     }
