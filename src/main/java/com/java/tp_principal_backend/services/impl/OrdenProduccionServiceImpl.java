@@ -135,6 +135,8 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
 
         orden.setProductoRequerido(request.getProductoRequerido());
         orden.setMarca(request.getMarca());
+        orden.setEnvasado(request.getEnvasado());
+        orden.setPresentacion(request.getPresentacion());
         orden.setStockRequerido(request.getStockRequerido());
         orden.setCodigoProducto(request.getCodigoProducto());
         orden.setFechaEntrega(request.getFechaEntrega());

@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface TiempoProduccionDao extends JpaRepository<TiempoProduccion, Long> {
     Optional<TiempoProduccion> findByProductoCodigo(String codigoProducto);
+    Optional<TiempoProduccion> findByProductoCodigoProducto(String codigoProducto);
 }

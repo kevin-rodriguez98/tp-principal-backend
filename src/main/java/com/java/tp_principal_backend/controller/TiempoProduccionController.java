@@ -33,6 +33,12 @@ public class TiempoProduccionController {
         return ResponseEntity.ok(tiempoService.obtenerTodos());
     }
 
+    @GetMapping("/obtener-tiempo-unitario")
+    public ResponseEntity<BigDecimal> obtenerTiempoPorProducto(@RequestParam String codigoProducto) {
+        BigDecimal tiempo = tiempoService.obtenerTiempoPorProducto(codigoProducto);
+        return ResponseEntity.ok(tiempo);
+    }
+
     @GetMapping("/calcular")
     public ResponseEntity<BigDecimal> calcularTiempo(
             @RequestParam String codigoProducto,

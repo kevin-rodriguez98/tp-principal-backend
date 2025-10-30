@@ -120,8 +120,9 @@ CREATE TABLE tiempo_produccion (
 
 ALTER TABLE orden_produccion
 ADD COLUMN nota VARCHAR(100),
-ADD COLUMN etapa VARCHAR(50);
-
+ADD COLUMN etapa VARCHAR(50),
+ADD COLUMN presentacion VARCHAR(50),
+ADD COLUMN envasado VARCHAR(50);
 
 --Crea tabla para historial de etapa
 CREATE TABLE historial_etapa (

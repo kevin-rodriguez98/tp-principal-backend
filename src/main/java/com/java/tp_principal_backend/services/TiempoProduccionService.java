@@ -9,4 +9,5 @@ public interface TiempoProduccionService {
     TiempoProduccion agregar(TiempoProduccion tiempo);
     List<TiempoProduccion> obtenerTodos();
     BigDecimal calcularTiempoTotal(String codigoProducto, BigDecimal cantidad);
+    BigDecimal obtenerTiempoPorProducto(String codigoProducto);
 }

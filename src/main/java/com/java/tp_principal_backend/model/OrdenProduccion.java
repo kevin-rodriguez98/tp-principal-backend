@@ -57,4 +57,10 @@ public class OrdenProduccion {
 
     @Column(name = "nota")
     private String nota;
+
+    @Column(name = "presentacion")
+    private String presentacion;
+
+    @Column(name= "envasado")
+    private String envasado;
 }

@@ -41,4 +41,10 @@ public class Producto {
 
     @Column(name = "creation_username")
     private String creationUsername;
+
+    @Column(name = "presentacion")
+    private String presentacion;
+
+    @Column(name= "envasado")
+    private String envasado;
 }

@@ -14,4 +14,6 @@ public class OrdenProduccionNormalRequest {
     private LocalDate fechaEntrega;
     private String estado;  // opcional, si no se manda, se pone "Evaluación"
     private String lote;
+    private String envasado;
+    private String presentacion;
 }

@@ -5,6 +5,7 @@ import com.java.tp_principal_backend.data.TiempoProduccionDao;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.TiempoProduccionService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,12 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
                 .orElseThrow(() -> new IllegalArgumentException("Producto no tiene tiempo de producción definido"));
 
         return tiempo.getTiempoPorUnidad().multiply(cantidad);
+    }
+
+    @Override
+    public BigDecimal obtenerTiempoPorProducto(String codigoProducto) {
+        TiempoProduccion tiempo = tiempoDao.findByProductoCodigoProducto(codigoProducto)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró tiempo de producción para el producto con código: " + codigoProducto));
+        return tiempo.getTiempoPorUnidad();
     }
 }
