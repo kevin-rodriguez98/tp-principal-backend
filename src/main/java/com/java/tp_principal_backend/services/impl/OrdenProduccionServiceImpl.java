@@ -1,15 +1,12 @@
 package com.java.tp_principal_backend.services.impl;
 
-import com.java.tp_principal_backend.data.HistorialEtapaDao;
-import com.java.tp_principal_backend.data.OrdenProduccionDao;
-import com.java.tp_principal_backend.data.ProductosDao;
+import com.java.tp_principal_backend.data.*;
 import com.java.tp_principal_backend.dto.OrdenProduccionNormalRequest;
 import com.java.tp_principal_backend.dto.OrdenProduccionRequest;
-import com.java.tp_principal_backend.model.HistorialEtapa;
-import com.java.tp_principal_backend.model.OrdenProduccion;
-import com.java.tp_principal_backend.model.Producto;
+import com.java.tp_principal_backend.model.*;
 import com.java.tp_principal_backend.services.OrdenProduccionService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +17,7 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
+@Slf4j
 public class OrdenProduccionServiceImpl implements OrdenProduccionService {
 
     @Autowired
@@ -27,6 +25,12 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
 
     @Autowired
     private ProductosDao productosDao;
+
+    @Autowired
+    private InsumoPorProductoDao insumoPorProductoDao;
+
+    @Autowired
+    private InsumosDao insumoDao;
 
     @Autowired
     private HistorialEtapaDao historialEtapaDao;
@@ -39,18 +43,18 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         return names[new Random().nextInt(names.length)];
     }
 
-    @Override
-    public OrdenProduccion agregarOrden(OrdenProduccionRequest request) {
-        OrdenProduccion orden = new OrdenProduccion();
-        orden.setProductoRequerido(request.getProductoRequerido());
-        orden.setMarca(request.getMarca());
-        orden.setStockRequerido(request.getStockRequerido());
-        orden.setFechaEntrega(request.getFechaEntrega());
-        orden.setEstado("Evaluación");
-        orden.setCreationUsername(randomUsername());
-
-        return ordenDao.save(orden);
-    }
+//    @Override
+//    public OrdenProduccion agregarOrden(OrdenProduccionRequest request) {
+//        OrdenProduccion orden = new OrdenProduccion();
+//        orden.setProductoRequerido(request.getProductoRequerido());
+//        orden.setMarca(request.getMarca());
+//        orden.setStockRequerido(request.getStockRequerido());
+//        orden.setFechaEntrega(request.getFechaEntrega());
+//        orden.setEstado("Evaluación");
+//        orden.setCreationUsername(randomUsername());
+//
+//        return ordenDao.save(orden);
+//    }
 
     @Override
     public List<OrdenProduccion> obtenerTodas() {
@@ -74,6 +78,7 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         boolean impactado = movimientoProductoService.restarInsumos(producto, orden.getStockRequerido());
         orden.setImpactado(impactado);
 
+        registrarHistorial(orden, "EN_PRODUCCION");
         return ordenDao.save(orden);
     }
 
@@ -91,13 +96,18 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         // Cambiar estado a CANCELADA
         orden.setEstado("CANCELADA");
 
+        registrarHistorial(orden, "CANCELADA");
         // Guardar cambios
         return ordenDao.save(orden);
     }
 
     @Override
     @Transactional
-    public OrdenProduccion marcarFinalizada(Integer ordenId, BigDecimal stockProducidoReal, String destino) {
+    public OrdenProduccion marcarFinalizada(
+            Integer ordenId,
+            BigDecimal stockProducidoReal,
+            String destino
+    ) {
         OrdenProduccion orden = ordenDao.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada"));
 
@@ -105,28 +115,77 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
             throw new IllegalStateException("Solo se puede finalizar una orden que está en producción.");
         }
 
-        // Asignar lote desde el producto
+        // Obtener producto
         Producto producto = productosDao.findByCodigo(orden.getCodigoProducto())
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-        orden.setLote(producto.getLote());
 
-        // Asignar stock producido real
+        // Asignar stock producido real (si no viene)
         if (stockProducidoReal == null) {
             stockProducidoReal = orden.getStockRequerido();
         }
         orden.setStockProducidoReal(stockProducidoReal);
 
-        // Egreso automático si los insumos no se impactaron antes
+        // Asignar lote del producto
+        orden.setLote(producto.getLote());
+
+        // Impactar insumos si aún no se hizo
         if (Boolean.FALSE.equals(orden.getImpactado())) {
-            movimientoProductoService.egresoAutomatico(orden.getCodigoProducto(), stockProducidoReal, destino);
+
+            // 1) Egreso directo del producto generado (tu lógica actual)
+            movimientoProductoService.egresoAutomatico(
+                    orden.getCodigoProducto(),
+                    stockProducidoReal,
+                    destino
+            );
+
+            // 2) Obtener receta por ID del producto
+            List<InsumoPorProducto> receta =
+                    insumoPorProductoDao.findByProductoId(producto.getId());
+
+            if (receta == null || receta.isEmpty()) {
+                log.warn("⚠ El producto {} no tiene insumos asociados. No se descontó receta.",
+                        producto.getCodigo());
+
+            } else {
+                // 3) Restar insumos según receta
+                for (InsumoPorProducto r : receta) {
+
+                    BigDecimal cantidadARestar =
+                            r.getStockNecesarioInsumo().multiply(stockProducidoReal);
+
+                    restarStockInsumo(
+                            r.getInsumo().getCodigo(),
+                            cantidadARestar
+                    );
+
+                    log.info("Insumo {} descontado: {} {}",
+                            r.getInsumo().getCodigo(),
+                            cantidadARestar,
+                            r.getInsumo().getUnidad());
+                }
+            }
+
             orden.setImpactado(true);
         }
 
-        // Cambiar estado a FINALIZADA_ENTREGADA
+        // 4) Sumar el stock producido al producto final
+        if (producto.getStock() == null) {
+            producto.setStock(BigDecimal.ZERO);
+        }
+
+        producto.setStock(
+                producto.getStock().add(stockProducidoReal)
+        );
+
+        productosDao.save(producto);
+
+        // 5) Cambiar estado
         orden.setEstado("FINALIZADA_ENTREGADA");
 
+        registrarHistorial(orden, "FINALIZADA");
         return ordenDao.save(orden);
     }
+
 
     @Override
     @Transactional
@@ -167,6 +226,7 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         HistorialEtapa historial = new HistorialEtapa();
         historial.setOrden(orden);
         historial.setEtapa(nuevaEtapa);
+        historial.setUsuario(randomUsername());
         historial.setFechaCambio(LocalDateTime.now());
         historialEtapaDao.save(historial);
 
@@ -192,5 +252,35 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     @Override
     public List<HistorialEtapa> obtenerHistorialPorOrden(Integer ordenId) {
         return historialEtapaDao.findByOrdenIdOrderByFechaCambioAsc(ordenId);
+    }
+
+    private void restarStockInsumo(String codigoInsumo, BigDecimal cantidad) {
+
+        Insumo insumo = insumoDao.findByCodigo(codigoInsumo)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Insumo no encontrado para el código: " + codigoInsumo));
+
+        if (insumo.getStock() == null) {
+            insumo.setStock(BigDecimal.ZERO);
+        }
+
+        BigDecimal nuevoStock = insumo.getStock().subtract(cantidad);
+
+        if (nuevoStock.compareTo(BigDecimal.ZERO) < 0) {
+            log.warn("⚠ El insumo {} quedó con stock negativo al restar {}",
+                    codigoInsumo, cantidad);
+        }
+
+        insumo.setStock(nuevoStock);
+        insumoDao.save(insumo);
+    }
+
+    private void registrarHistorial(OrdenProduccion orden, String estado) {
+        HistorialEtapa historial = new HistorialEtapa();
+        historial.setOrden(orden);
+        historial.setEtapa(estado);
+        historial.setFechaCambio(LocalDateTime.now());
+        historial.setUsuario(randomUsername());
+        historialEtapaDao.save(historial);
     }
 }

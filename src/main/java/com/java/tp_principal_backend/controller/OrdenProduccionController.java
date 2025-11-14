@@ -18,11 +18,11 @@ public class OrdenProduccionController {
     @Autowired
     private OrdenProduccionService ordenService;
 
-    @PostMapping("/agregarautomatizado")
-    public ResponseEntity<OrdenProduccion> agregarOrden(@RequestBody OrdenProduccionRequest request) {
-        OrdenProduccion orden = ordenService.agregarOrden(request);
-        return ResponseEntity.ok(orden);
-    }
+//    @PostMapping("/agregarautomatizado")
+//    public ResponseEntity<OrdenProduccion> agregarOrden(@RequestBody OrdenProduccionRequest request) {
+//        OrdenProduccion orden = ordenService.agregarOrden(request);
+//        return ResponseEntity.ok(orden);
+//    }
 
     @PostMapping("/agregar")
     public ResponseEntity<OrdenProduccion> agregarOrden(@RequestBody OrdenProduccionNormalRequest request) {

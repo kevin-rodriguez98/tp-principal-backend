@@ -33,10 +33,10 @@ public class Producto {
     @Column(nullable = false)
     private String unidad;
 
-    @Column(nullable = false)
-    private BigDecimal stock = BigDecimal.ZERO;
+    @Column
+    private BigDecimal stock;
 
-    @Column(nullable = false)
+    @Column
     private String lote;
 
     @Column(name = "creation_username")

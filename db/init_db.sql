@@ -135,3 +135,28 @@ CREATE TABLE historial_etapa (
         FOREIGN KEY (orden_id) REFERENCES orden_produccion(id)
         ON DELETE CASCADE
 );
+
+--Modificar default en stock de productos
+ALTER TABLE producto
+MODIFY stock DECIMAL(10,2) NULL;
+
+--Modificar tabla de orden de produccion
+ALTER TABLE orden_produccion
+ADD COLUMN encargado_orden,
+ADD COLUMN responsable_estado,
+
+--Alter table de el tiempo de produccion
+ALTER TABLE tiempo_produccion
+ADD COLUMN etapa VARCHAR(50),
+ADD COLUMN stock_soportado INT NOT NULL,
+ADD COLUMN unidad VARCHAR(50) NOT NULL,
+MODIFY COLUMN id_producto INT NULL;
+MODIFY COLUMN tiempo_por_unidad INT NULL;
+ADD COLUMN tiempo_etapa INT NOT NULL;
+
+INSERT INTO tiempo_produccion (etapa, tiempo_etapa, stock_soportado, unidad)
+VALUES
+('coccion', 2, 500, 'kg'),
+('enfriado', 24, 500, 'kg'),
+('almacenamiento', 48, 500, 'kg'),
+('envasado', 8, 500, 'kg');

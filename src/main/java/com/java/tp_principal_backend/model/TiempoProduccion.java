@@ -18,9 +18,21 @@ public class TiempoProduccion {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "producto_id", nullable = false, unique = true)
+    @JoinColumn(name = "id_producto", unique = true)
     private Producto producto;
 
-    @Column(name = "tiempo_por_unidad", nullable = false)
+    @Column(name = "tiempo_por_unidad")
     private BigDecimal tiempoPorUnidad;
+
+    @Column(name = "etapa")
+    private String etapa;
+
+    @Column(name = "stock_soportado")
+    private Integer stockSoportado;
+
+    @Column(name = "unidad")
+    private String unidad;
+
+    @Column(name = "tiempo_etapa")
+    private Integer tiempoEtapa;
 }

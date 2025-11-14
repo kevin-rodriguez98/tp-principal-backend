@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class OrdenProduccionRequest {
+    //TODO: eliminarlo si usamos la orden normal
     private String productoRequerido;
     private String marca;
     private BigDecimal stockRequerido;

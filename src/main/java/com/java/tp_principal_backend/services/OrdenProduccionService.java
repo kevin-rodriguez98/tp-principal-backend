@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrdenProduccionService {
-    OrdenProduccion agregarOrden(OrdenProduccionRequest request);
+//    OrdenProduccion agregarOrden(OrdenProduccionRequest request);
     List<OrdenProduccion> obtenerTodas();
     OrdenProduccion marcarEnProduccion(Integer ordenId, String codigoProducto);
     OrdenProduccion marcarCancelada(Integer ordenId);
