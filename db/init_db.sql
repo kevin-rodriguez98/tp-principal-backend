@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS frozen_lacteos;
 CREATE DATABASE frozen_lacteos;
 USE frozen_lacteos;
 
---Crea tabla de insumos
+-- Crea tabla de insumos
 CREATE TABLE insumo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     codigo VARCHAR(50) NOT NULL,
@@ -11,12 +11,11 @@ CREATE TABLE insumo (
     marca VARCHAR(50) NOT NULL,
     unidad VARCHAR(10) NOT NULL,
     stock DECIMAL(10,2) DEFAULT 0,
-    lote VARCHAR(20) NOT NULL,
     umbral_minimo_stock INT DEFAULT 0 CHECK (umbral_minimo_stock >= 0),
     UNIQUE (codigo)
 );
 
---Crea tabla de registro de stock
+-- Crea tabla de registro de stock
 CREATE TABLE movimiento_insumo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     codigo VARCHAR(50) NOT NULL,
@@ -86,7 +85,7 @@ CREATE TABLE movimiento_producto (
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---Agrega columnos al movimiento de los productos
+-- Agrega columnos al movimiento de los productos
 ALTER table movimiento_producto
 ADD COLUMN nombre VARCHAR(50),
 ADD COLUMN categoria VARCHAR(50),
@@ -124,7 +123,7 @@ ADD COLUMN etapa VARCHAR(50),
 ADD COLUMN presentacion VARCHAR(50),
 ADD COLUMN envasado VARCHAR(50);
 
---Crea tabla para historial de etapa
+-- Crea tabla para historial de etapa
 CREATE TABLE historial_etapa (
     id INT AUTO_INCREMENT PRIMARY KEY,
     orden_id INT NOT NULL,
@@ -136,22 +135,22 @@ CREATE TABLE historial_etapa (
         ON DELETE CASCADE
 );
 
---Modificar default en stock de productos
+-- Modificar default en stock de productos
 ALTER TABLE producto
 MODIFY stock DECIMAL(10,2) NULL;
 
---Modificar tabla de orden de produccion
+-- Modificar tabla de orden de produccion
 ALTER TABLE orden_produccion
-ADD COLUMN encargado_orden,
-ADD COLUMN responsable_estado,
+ADD COLUMN encargado_orden VARCHAR(50),
+ADD COLUMN responsable_estado VARCHAR(50);
 
---Alter table de el tiempo de produccion
+-- Alter table de el tiempo de produccion
 ALTER TABLE tiempo_produccion
 ADD COLUMN etapa VARCHAR(50),
 ADD COLUMN stock_soportado INT NOT NULL,
 ADD COLUMN unidad VARCHAR(50) NOT NULL,
-MODIFY COLUMN id_producto INT NULL;
-MODIFY COLUMN tiempo_por_unidad INT NULL;
+MODIFY COLUMN id_producto INT NULL,
+MODIFY COLUMN tiempo_por_unidad INT NULL,
 ADD COLUMN tiempo_etapa INT NOT NULL;
 
 INSERT INTO tiempo_produccion (etapa, tiempo_etapa, stock_soportado, unidad)

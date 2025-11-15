@@ -78,7 +78,6 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
             insumo.setCategoria(request.getCategoria());
             insumo.setMarca(request.getMarca());
             insumo.setUnidad(request.getUnidad());
-            insumo.setLote(request.getLote());
             insumo.setProveedor(request.getProveedor());
             insumo.setStock(request.getStock());
             insumo.setUmbralMinimoStock(0);

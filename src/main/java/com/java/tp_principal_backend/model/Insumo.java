@@ -36,9 +36,6 @@ public class Insumo {
     @Column(nullable = false)
     private BigDecimal stock = BigDecimal.ZERO;
 
-    @Column(nullable = false)
-    private String lote;
-
     @Column(name = "umbral_minimo_stock", nullable = false)
     private Integer umbralMinimoStock = 0;
 

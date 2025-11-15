@@ -33,7 +33,6 @@ public class InsumosServicesImpl implements InsumosServices {
         insumo.setMarca(request.getMarca());
         insumo.setUnidad(request.getUnidad());
         insumo.setStock(request.getStock());
-        insumo.setLote(request.getLote());
         if (request.getUmbralMinimoStock() != null) {
             insumo.setUmbralMinimoStock(request.getUmbralMinimoStock());
         }
@@ -67,9 +66,6 @@ public class InsumosServicesImpl implements InsumosServices {
                         break;
                     case "stock":
                         insumo.setStock(new java.math.BigDecimal(valor.toString()));
-                        break;
-                    case "lote":
-                        insumo.setLote((String) valor);
                         break;
                     case "umbralMinimoStock":
                         insumo.setUmbralMinimoStock(Integer.parseInt(valor.toString()));
