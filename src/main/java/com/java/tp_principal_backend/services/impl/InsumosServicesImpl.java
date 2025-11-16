@@ -32,6 +32,7 @@ public class InsumosServicesImpl implements InsumosServices {
         insumo.setCategoria(request.getCategoria());
         insumo.setMarca(request.getMarca());
         insumo.setUnidad(request.getUnidad());
+        insumo.setLote("0000");
         insumo.setStock(request.getStock());
         if (request.getUmbralMinimoStock() != null) {
             insumo.setUmbralMinimoStock(request.getUmbralMinimoStock());
