@@ -7,7 +7,7 @@ public class ProductoRequest {
     private String codigo;
     private String nombre;
     private String categoria;
-    private String marca;
+    private String linea;
     private String unidad;
     private String legajoResponsable;
 }

@@ -29,7 +29,7 @@ public class Producto {
     private String categoria;
 
     @Column(nullable = false)
-    private String marca;
+    private String linea;
 
     @Column(nullable = false)
     private String unidad;

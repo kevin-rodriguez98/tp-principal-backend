@@ -58,7 +58,7 @@ public class ProductosServiceTest {
         request.setCodigo("P001");
         request.setNombre("Leche");
         request.setCategoria("Lácteos");
-        request.setMarca("Serenisima");
+        request.setLinea("Entero");
         request.setUnidad("Litro");
   
         when(empleadosDao.buscarPorLegajo(any())).thenReturn(new Empleados());

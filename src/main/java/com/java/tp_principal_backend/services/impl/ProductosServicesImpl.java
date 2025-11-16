@@ -48,7 +48,7 @@ public class ProductosServicesImpl implements ProductosServices {
         producto.setCodigo(request.getCodigo());
         producto.setNombre(request.getNombre());
         producto.setCategoria(request.getCategoria());
-        producto.setMarca(request.getMarca());
+        producto.setLinea(request.getLinea());
         producto.setStock(BigDecimal.ZERO);
         producto.setUnidad(request.getUnidad());
         
@@ -73,7 +73,7 @@ public class ProductosServicesImpl implements ProductosServices {
             switch (clave) {
                 case "nombre" -> producto.setNombre((String) valor);
                 case "categoria" -> producto.setCategoria((String) valor);
-                case "marca" -> producto.setMarca((String) valor);
+                case "marca" -> producto.setLinea((String) valor);
                 case "unidad" -> producto.setUnidad((String) valor);
                 case "stock" -> producto.setStock(new BigDecimal(valor.toString()));
                 case "codigo" -> {

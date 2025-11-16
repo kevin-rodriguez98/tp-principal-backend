@@ -110,7 +110,7 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
 
         // 👇 seteo de campos adicionales
         movimiento.setCategoria(producto.getCategoria());
-        movimiento.setMarca(producto.getMarca());
+        movimiento.setMarca(producto.getLinea());
         movimiento.setUnidad(producto.getUnidad());
         movimiento.setLote(producto.getLote());
         movimiento.setNombre(producto.getNombre());
