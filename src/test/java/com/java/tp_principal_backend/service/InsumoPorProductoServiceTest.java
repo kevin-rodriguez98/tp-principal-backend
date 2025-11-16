@@ -50,7 +50,7 @@ public class InsumoPorProductoServiceTest {
         InsumoPorProductoRequest request = new InsumoPorProductoRequest();
         request.setCodigoProducto("P001");
         request.getInsumo().setCodigoInsumo("I002");
-        request.getInsumo().setStockNecesarioInsumo(BigDecimal.valueOf(0.5));
+        request.getInsumo().setCantidadNecesaria(BigDecimal.valueOf(0.5));
 
         Producto producto = new Producto();
         producto.setId(1);
@@ -87,7 +87,7 @@ public class InsumoPorProductoServiceTest {
         InsumoPorProductoRequest request = new InsumoPorProductoRequest();
         request.setCodigoProducto("P999");
         request.getInsumo().setCodigoInsumo("I001");
-        request.getInsumo().setStockNecesarioInsumo(BigDecimal.ONE);
+        request.getInsumo().setCantidadNecesaria(BigDecimal.ONE);
 
         when(productosDao.findByCodigo("P999")).thenReturn(Optional.empty());
 
@@ -104,7 +104,7 @@ public class InsumoPorProductoServiceTest {
         InsumoPorProductoRequest request = new InsumoPorProductoRequest();
         request.setCodigoProducto("P001");
         request.getInsumo().setCodigoInsumo("I999");
-        request.getInsumo().setStockNecesarioInsumo(BigDecimal.ONE);
+        request.getInsumo().setCantidadNecesaria(BigDecimal.ONE);
 
         Producto producto = new Producto();
         producto.setCodigo("P001");

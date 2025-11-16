@@ -43,7 +43,7 @@ public class InsumoPorProductoServiceImpl implements InsumoPorProductoService {
         InsumoPorProducto receta = new InsumoPorProducto();
         receta.setProducto(producto);
         receta.setInsumo(insumo);
-        receta.setStockNecesarioInsumo(request.getInsumo().getStockNecesarioInsumo());
+        receta.setStockNecesarioInsumo(request.getInsumo().getCantidadNecesaria());
         receta.setUnidad(insumo.getUnidad());
 
         // 4️⃣ Guardar en DB

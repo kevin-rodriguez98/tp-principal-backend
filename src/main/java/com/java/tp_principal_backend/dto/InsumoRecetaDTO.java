@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 public class InsumoRecetaDTO {
     private String codigoInsumo;
-    private BigDecimal stockNecesarioInsumo;
+    private BigDecimal cantidadNecesaria;
     private String unidad;
     private String nombreInusmo;
 }
