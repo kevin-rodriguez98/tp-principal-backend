@@ -50,9 +50,7 @@ public class ProductosServiceTest {
         request.setCategoria("Lácteos");
         request.setMarca("Serenisima");
         request.setUnidad("Litro");
-        request.setStock(BigDecimal.valueOf(10));
-        request.setLote("L001");
-
+  
         when(productosDao.findByCodigo("P001")).thenReturn(Optional.empty());
         when(productosDao.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));
 

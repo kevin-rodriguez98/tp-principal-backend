@@ -80,7 +80,6 @@ public class InsumoServiceTest {
         existente.setMarca("MarcaVieja");
         existente.setUnidad("u");
         existente.setStock(BigDecimal.ONE);
-        existente.setLote("L1");
         existente.setUmbralMinimoStock(1);
 
         Map<String, Object> cambios = new HashMap<>();
