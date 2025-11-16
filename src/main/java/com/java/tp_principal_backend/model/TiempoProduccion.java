@@ -18,7 +18,7 @@ public class TiempoProduccion {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id_producto", unique = true)
+    @JoinColumn(name = "producto_id", unique = true)
     private Producto producto;
 
     @Column(name = "tiempo_por_unidad")

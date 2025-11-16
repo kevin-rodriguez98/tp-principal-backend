@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "producto")
@@ -41,10 +42,24 @@ public class Producto {
 
     @Column(name = "creation_username")
     private String creationUsername;
+    
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "presentacion")
     private String presentacion;
 
     @Column(name= "envasado")
     private String envasado;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_empleado", nullable = false)
+    private Empleados empleados;
+
+    @PrePersist
+    public void prePersist() {
+        if (fechaCreacion == null) {
+        	fechaCreacion = LocalDateTime.now();
+        }
+    }
 }

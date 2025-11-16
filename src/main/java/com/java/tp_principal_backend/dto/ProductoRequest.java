@@ -9,4 +9,5 @@ public class ProductoRequest {
     private String categoria;
     private String marca;
     private String unidad;
+    private String legajoResponsable;
 }

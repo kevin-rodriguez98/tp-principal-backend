@@ -1,7 +1,9 @@
 package com.java.tp_principal_backend.service;
 
+import com.java.tp_principal_backend.data.EmpleadosDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.dto.ProductoRequest;
+import com.java.tp_principal_backend.model.Empleados;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.TiempoProduccionService;
@@ -25,6 +27,9 @@ public class ProductosServiceTest {
     
     @Mock
     private TiempoProduccionService timpoProduccionSercvice; 
+    
+    @Mock
+    private EmpleadosDao empleadosDao;
 
     @InjectMocks
     private ProductosServicesImpl productosServices;
@@ -56,6 +61,7 @@ public class ProductosServiceTest {
         request.setMarca("Serenisima");
         request.setUnidad("Litro");
   
+        when(empleadosDao.buscarPorLegajo(any())).thenReturn(new Empleados());
         when(productosDao.findByCodigo("P001")).thenReturn(Optional.empty());
         when(timpoProduccionSercvice.agregar(any())).thenReturn(new TiempoProduccion());
         when(productosDao.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));

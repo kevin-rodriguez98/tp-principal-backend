@@ -31,17 +31,14 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
     @Override
     @Transactional
     public TiempoProduccion agregar(TiempoProduccion tiempo) {
-        Producto producto = productosDao.findByCodigo(tiempo.getProducto().getCodigo())
-                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-
-        // Validar que no exista ya un tiempo
-        /*boolean existe = tiempoDao.findByProductoCodigo(producto.getCodigo()).isPresent();
-        if (existe) {
-            throw new IllegalArgumentException("El producto ya tiene un tiempo de producción definido");
-        }*/
-
-        tiempo.setProducto(producto);
-        return tiempoDao.save(tiempo);
+    	try {
+    		Producto producto = productosDao.findByCodigo(tiempo.getProducto().getCodigo())
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+    		tiempo.setProducto(producto);
+    		 return tiempoDao.save(tiempo);
+		} catch (Exception e) {
+			 return tiempoDao.save(tiempo);
+		}
     }
 
     @Override
