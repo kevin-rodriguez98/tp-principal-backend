@@ -1,6 +1,7 @@
 package com.java.tp_principal_backend.controller;
 
 import com.java.tp_principal_backend.dto.TiempoProduccionRequest;
+import com.java.tp_principal_backend.dto.TiempoProduccionResponse;
 import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.TiempoProduccionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,8 @@ public class TiempoProduccionController {
     }
 
     @GetMapping("/obtener-tiempo-unitario")
-    public ResponseEntity<BigDecimal> obtenerTiempoPorProducto(@RequestParam String codigoProducto) {
-        BigDecimal tiempo = tiempoService.obtenerTiempoPorProducto(codigoProducto);
+    public ResponseEntity<TiempoProduccionResponse> obtenerTiempoPorProducto(@RequestParam String codigoProducto) {
+    	TiempoProduccionResponse tiempo = tiempoService.obtenerTiempoPorProducto(codigoProducto);
         return ResponseEntity.ok(tiempo);
     }
 
