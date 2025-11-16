@@ -3,6 +3,8 @@ package com.java.tp_principal_backend.service;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.dto.ProductoRequest;
 import com.java.tp_principal_backend.model.Producto;
+import com.java.tp_principal_backend.model.TiempoProduccion;
+import com.java.tp_principal_backend.services.TiempoProduccionService;
 import com.java.tp_principal_backend.services.impl.ProductosServicesImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,9 @@ public class ProductosServiceTest {
 
     @Mock
     private ProductosDao productosDao;
+    
+    @Mock
+    private TiempoProduccionService timpoProduccionSercvice; 
 
     @InjectMocks
     private ProductosServicesImpl productosServices;
@@ -52,6 +57,7 @@ public class ProductosServiceTest {
         request.setUnidad("Litro");
   
         when(productosDao.findByCodigo("P001")).thenReturn(Optional.empty());
+        when(timpoProduccionSercvice.agregar(any())).thenReturn(new TiempoProduccion());
         when(productosDao.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Producto resultado = productosServices.agregarProducto(request);

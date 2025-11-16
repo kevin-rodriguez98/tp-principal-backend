@@ -3,7 +3,10 @@ package com.java.tp_principal_backend.services.impl;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.dto.ProductoRequest;
 import com.java.tp_principal_backend.model.Producto;
+import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.ProductosServices;
+import com.java.tp_principal_backend.services.TiempoProduccionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,9 @@ import java.util.Random;
 public class ProductosServicesImpl implements ProductosServices {
     @Autowired
     private ProductosDao productosDao;
+    
+    @Autowired
+    private TiempoProduccionService tiempoProduccionService;
 
     @Override
     public List<Producto> obtenerTodosLosProductos() {
@@ -43,6 +49,12 @@ public class ProductosServicesImpl implements ProductosServices {
         // Asignar un nombre random para creationUsername
         String randomUsername = "user" + new Random().nextInt(10000);
         producto.setCreationUsername(randomUsername);
+        
+        TiempoProduccion tiempoInicial = new TiempoProduccion();
+        tiempoInicial.setProducto(producto);
+        tiempoInicial.setTiempoPorUnidad(BigDecimal.ZERO);
+        
+        tiempoProduccionService.agregar(tiempoInicial);
 
         // 3️⃣ Guardar en la base
         return productosDao.save(producto);

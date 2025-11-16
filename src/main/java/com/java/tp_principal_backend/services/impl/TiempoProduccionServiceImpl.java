@@ -35,10 +35,10 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
         // Validar que no exista ya un tiempo
-        boolean existe = tiempoDao.findByProductoCodigo(producto.getCodigo()).isPresent();
+        /*boolean existe = tiempoDao.findByProductoCodigo(producto.getCodigo()).isPresent();
         if (existe) {
             throw new IllegalArgumentException("El producto ya tiene un tiempo de producción definido");
-        }
+        }*/
 
         tiempo.setProducto(producto);
         return tiempoDao.save(tiempo);

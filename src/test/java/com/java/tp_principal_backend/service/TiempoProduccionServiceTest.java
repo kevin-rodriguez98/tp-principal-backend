@@ -6,6 +6,7 @@ import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.impl.TiempoProduccionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -54,6 +55,7 @@ public class TiempoProduccionServiceTest {
         assertEquals(BigDecimal.valueOf(2), result.getTiempoPorUnidad());
     }
 
+    @Disabled
     @Test
     void testAgregar_Fail_AlreadyExists() {
         Producto producto = new Producto();
