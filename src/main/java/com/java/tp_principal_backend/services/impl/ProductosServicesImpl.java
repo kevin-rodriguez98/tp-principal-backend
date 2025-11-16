@@ -38,6 +38,7 @@ public class ProductosServicesImpl implements ProductosServices {
         producto.setCategoria(request.getCategoria());
         producto.setMarca(request.getMarca());
         producto.setLote("0000");
+        producto.setStock(BigDecimal.ZERO);
         producto.setUnidad(request.getUnidad());
 
         // Asignar un nombre random para creationUsername
