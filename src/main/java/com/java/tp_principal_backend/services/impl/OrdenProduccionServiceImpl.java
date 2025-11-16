@@ -2,7 +2,6 @@ package com.java.tp_principal_backend.services.impl;
 
 import com.java.tp_principal_backend.data.*;
 import com.java.tp_principal_backend.dto.OrdenProduccionNormalRequest;
-import com.java.tp_principal_backend.dto.OrdenProduccionRequest;
 import com.java.tp_principal_backend.model.*;
 import com.java.tp_principal_backend.services.OrdenProduccionService;
 import jakarta.transaction.Transactional;

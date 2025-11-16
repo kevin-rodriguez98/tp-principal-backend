@@ -37,7 +37,6 @@ public class ProductosServicesImpl implements ProductosServices {
         producto.setNombre(request.getNombre());
         producto.setCategoria(request.getCategoria());
         producto.setMarca(request.getMarca());
-        producto.setLote("0000");
         producto.setStock(BigDecimal.ZERO);
         producto.setUnidad(request.getUnidad());
 
@@ -63,8 +62,6 @@ public class ProductosServicesImpl implements ProductosServices {
                 case "marca" -> producto.setMarca((String) valor);
                 case "unidad" -> producto.setUnidad((String) valor);
                 case "stock" -> producto.setStock(new BigDecimal(valor.toString()));
-                case "lote" -> producto.setLote((String) valor);
-
                 case "codigo" -> {
                     String nuevoCodigo = (String) valor;
 

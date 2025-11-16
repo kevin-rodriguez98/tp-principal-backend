@@ -38,7 +38,6 @@ public class InsumoServiceTest {
         request.setMarca("ACME");
         request.setUnidad("kg");
         request.setStock(BigDecimal.TEN);
-        request.setLote("L123");
         request.setUmbralMinimoStock(5);
 
         when(insumosDao.findByCodigo("A001")).thenReturn(Optional.empty());
