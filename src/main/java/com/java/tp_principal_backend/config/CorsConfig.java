@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // todas las rutas
-                        .allowedOrigins("https://tp-principal-frontend.netlify.app") // dominio permitido
+                        .allowedOrigins("https://tp-principal-frontend.netlify.app", "http://localhost:5173/") // dominio permitido
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                        .allowedHeaders("*")
                         .allowCredentials(true);
