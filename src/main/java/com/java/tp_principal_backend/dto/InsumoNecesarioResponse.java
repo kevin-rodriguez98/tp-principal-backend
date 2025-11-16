@@ -11,4 +11,5 @@ public class InsumoNecesarioResponse {
     private String codigoInsumo;
     private String nombreInsumo;
     private BigDecimal cantidadNecesaria;
+    private String unidad;
 }

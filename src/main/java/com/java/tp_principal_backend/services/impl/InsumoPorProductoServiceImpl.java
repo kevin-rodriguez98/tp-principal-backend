@@ -36,14 +36,15 @@ public class InsumoPorProductoServiceImpl implements InsumoPorProductoService {
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
         // 2️⃣ Buscar insumo por código
-        Insumo insumo = insumosDao.findByCodigo(request.getCodigoInsumo())
+        Insumo insumo = insumosDao.findByCodigo(request.getInsumo().getCodigoInsumo())
                 .orElseThrow(() -> new IllegalArgumentException("Insumo no encontrado"));
 
         // 3️⃣ Crear registro de receta
         InsumoPorProducto receta = new InsumoPorProducto();
         receta.setProducto(producto);
         receta.setInsumo(insumo);
-        receta.setStockNecesarioInsumo(request.getStockNecesarioInsumo());
+        receta.setStockNecesarioInsumo(request.getInsumo().getStockNecesarioInsumo());
+        receta.setUnidad(insumo.getUnidad());
 
         // 4️⃣ Guardar en DB
         return recetaDao.save(receta);
@@ -63,7 +64,8 @@ public class InsumoPorProductoServiceImpl implements InsumoPorProductoService {
                 .map(r -> new InsumoNecesarioResponse(
                         r.getInsumo().getCodigo(),
                         r.getInsumo().getNombre(),
-                        r.getStockNecesarioInsumo().multiply(cantidadProducto)
+                        r.getStockNecesarioInsumo(),
+                        r.getUnidad()
                 ))
                 .collect(Collectors.toList());
     }

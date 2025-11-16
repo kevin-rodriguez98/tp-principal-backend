@@ -29,4 +29,7 @@ public class InsumoPorProducto {
 
     @Column(name = "stock_necesario_insumo", nullable = false)
     private BigDecimal stockNecesarioInsumo;
+    
+    @Column(name = "unidad", nullable = false)
+    private String unidad;
 }
