@@ -49,7 +49,7 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     
     @Override
     public  OrdenProduccion marcarFinalizada(OrdenFinalizadaRequest ordenFinalizada) {
-    	Empleados empleado = empleadosDao.buscarPorLegajo(ordenFinalizada.getLegajo().isBlank()?"100":ordenFinalizada.getLegajo());
+    	Empleados empleado = empleadosDao.buscarPorLegajo(ordenFinalizada.getLegajo() == null?"100":ordenFinalizada.getLegajo());
     	OrdenProduccion orden = ordenDao.findById(ordenFinalizada.getOrdenId()).orElseThrow();
         Producto producto = productosDao.findByCodigo(orden.getCodigoProducto())
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
@@ -92,7 +92,7 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     @Override
     @Transactional
     public OrdenProduccion agregarOrdenNormal(OrdenProduccionNormalRequest request) {
-    	Empleados empleado = empleadosDao.buscarPorLegajo(request.getLegajo().isBlank()? "100":request.getLegajo());
+    	Empleados empleado = empleadosDao.buscarPorLegajo(request.getLegajo()==null? "100":request.getLegajo());
     	OrdenProduccion orden = new OrdenProduccion();
 
         orden.setProductoRequerido(request.getProductoRequerido());
