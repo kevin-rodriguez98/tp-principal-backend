@@ -122,10 +122,15 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     public OrdenProduccion actualizarEtapa(EtapaRequest nuevoEstado) {
     	Empleados empleado = empleadosDao.buscarPorLegajo(nuevoEstado.getLegajo());
         OrdenProduccion orden = ordenDao.findById(nuevoEstado.getIdOrden()).orElseThrow(() -> new RuntimeException("orden no encontrado"));
-        orden.setEtapa(nuevoEstado.getEstado());
-        if(nuevoEstado.getEstado().equals("EN_PRODUCCION")) {
-        	marcarEnProduccion(orden);
-        }
+        
+        if(nuevoEstado.getIsEstado()) {
+        	orden.setEstado(nuevoEstado.getEstado());
+        	if(nuevoEstado.getEstado().equals("EN_PRODUCCION")) {
+            	marcarEnProduccion(orden);
+            }
+        }else
+        	orden.setEtapa(nuevoEstado.getEstado());
+        
         guradarHistorial(orden,empleado,nuevoEstado.getEstado());
         return ordenDao.save(orden);
     }

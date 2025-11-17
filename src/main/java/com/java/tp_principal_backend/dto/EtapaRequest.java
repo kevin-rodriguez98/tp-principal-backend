@@ -7,5 +7,6 @@ public class EtapaRequest {
 	private int idOrden;
 	private String legajo;
 	private String estado;
+	private Boolean isEstado;
 
 }
