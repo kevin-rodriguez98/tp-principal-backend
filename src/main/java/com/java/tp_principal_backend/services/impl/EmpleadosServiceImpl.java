@@ -1,5 +1,7 @@
 package com.java.tp_principal_backend.services.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,15 +24,18 @@ public class EmpleadosServiceImpl implements EmpleadoService{
 		empleadoNuevo.setLegajo(empleado.getLegajo());
 		empleadoNuevo.setArea(empleado.getArea());
 		empleadoNuevo.setRol(empleado.getRol());
-		
 		return empleadoDao.save(empleadoNuevo);
-		
 	}
 
 	@Override
-	public Empleados eliminarEmpleado(String legajo) {
-		// TODO Auto-generated method stub
-		return null;
+	public void eliminarEmpleado(String legajo) {
+		Empleados empleado = empleadoDao.buscarPorLegajo(legajo);
+		empleadoDao.delete(empleado);
+	}
+
+	@Override
+	public List<Empleados> obtenerEmpleados() {
+		return empleadoDao.findAll();
 	}
 	
 }
