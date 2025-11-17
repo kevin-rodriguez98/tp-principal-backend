@@ -16,4 +16,5 @@ public class OrdenProduccionNormalRequest {
     private String lote;
     private String envasado;
     private String presentacion;
+    private String legajo;
 }

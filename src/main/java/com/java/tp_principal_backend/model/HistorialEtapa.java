@@ -16,10 +16,14 @@ public class HistorialEtapa {
     @ManyToOne
     @JoinColumn(name = "orden_id", nullable = false)
     private OrdenProduccion orden;
-
+    
+    @Column
     private String etapa;
-
+    
+    @Column
     private LocalDateTime fechaCambio;
-
-    private String usuario;
+    
+    @ManyToOne
+    @JoinColumn(name = "empleado_id", nullable = false)
+    private Empleados empleado;
 }
