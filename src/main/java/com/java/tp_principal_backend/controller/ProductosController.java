@@ -1,6 +1,7 @@
 package com.java.tp_principal_backend.controller;
 
 import com.java.tp_principal_backend.dto.ProductoRequest;
+import com.java.tp_principal_backend.dto.ProductosResponse;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.services.ProductosServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class ProductosController {
     }
 
     @GetMapping("/obtener")
-    public ResponseEntity<List<Producto>> obtenerTodos() {
-        List<Producto> productos = productosServices.obtenerTodosLosProductos();
+    public ResponseEntity<List<ProductosResponse>> obtenerTodos() {
+        List<ProductosResponse> productos = productosServices.obtenerTodosLosProductos();
         return ResponseEntity.ok(productos);
     }
 

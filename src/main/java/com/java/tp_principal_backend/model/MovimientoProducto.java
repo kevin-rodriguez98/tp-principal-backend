@@ -52,6 +52,9 @@ public class MovimientoProducto {
 
     @Column(name = "nombre")
     private String nombre;
+    
+    @Column(name = "legajo_empleado")
+    private String empleado;
 
     // Para setear la fecha automáticamente al crear un registro
     @PrePersist

@@ -3,6 +3,7 @@ package com.java.tp_principal_backend.service;
 import com.java.tp_principal_backend.data.EmpleadosDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.dto.ProductoRequest;
+import com.java.tp_principal_backend.dto.ProductosResponse;
 import com.java.tp_principal_backend.model.Empleados;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.model.TiempoProduccion;
@@ -45,7 +46,7 @@ public class ProductosServiceTest {
         List<Producto> productos = List.of(new Producto(), new Producto());
         when(productosDao.findAll()).thenReturn(productos);
 
-        List<Producto> resultado = productosServices.obtenerTodosLosProductos();
+        List<ProductosResponse> resultado = productosServices.obtenerTodosLosProductos();
 
         assertEquals(2, resultado.size());
         verify(productosDao, times(1)).findAll();

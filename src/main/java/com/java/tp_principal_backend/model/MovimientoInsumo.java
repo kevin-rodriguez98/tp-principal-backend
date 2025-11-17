@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movimiento_insumo")
@@ -48,9 +49,12 @@ public class MovimientoInsumo {
     @Column
     private Boolean impactado;
 
-    @Column(name = "creation_username")
-    private String creationUsername;
-
     @Column
     private String proveedor;
+    
+    @Column(name = "legajo_empleado")
+    private String empleado;
+    
+    @Column(name = "fecha_hora")
+    private LocalDateTime fechaHora;
 }

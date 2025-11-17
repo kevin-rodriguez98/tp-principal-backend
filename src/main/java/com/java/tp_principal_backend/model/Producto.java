@@ -52,9 +52,8 @@ public class Producto {
     @Column(name= "envasado")
     private String envasado;
     
-    @ManyToOne
-    @JoinColumn(name = "id_empleado", nullable = false)
-    private Empleados empleados;
+    @Column(name = "legajo_empleado")
+    private String empleados;
 
     @PrePersist
     public void prePersist() {

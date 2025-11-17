@@ -1,7 +1,9 @@
 package com.java.tp_principal_backend.services.impl;
 
+import com.java.tp_principal_backend.data.EmpleadosDao;
 import com.java.tp_principal_backend.data.InsumosDao;
 import com.java.tp_principal_backend.data.MovimientoInsumoDao;
+import com.java.tp_principal_backend.dto.MoviemientoInsumoResponse;
 import com.java.tp_principal_backend.dto.MovimientoInsumoRequest;
 import com.java.tp_principal_backend.model.Insumo;
 import com.java.tp_principal_backend.model.MovimientoInsumo;
@@ -12,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @Slf4j
@@ -21,14 +23,12 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
 
     @Autowired
     private InsumosDao insumosDao;
+    
+    @Autowired
+    private EmpleadosDao empleadosDao;
 
     @Autowired
     private MovimientoInsumoDao movimientoDao;
-
-    private String randomUsername() {
-        String[] names = {"Ana", "Luis", "Juan", "María", "Carlos", "Selena", "Kevin", "Juliana", "Matias"};
-        return names[new Random().nextInt(names.length)];
-    }
 
     @Override
     @Transactional
@@ -90,7 +90,6 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
             insumosDao.save(insumo);
             impactado = true;
         }
-
         return crearMovimientoBase(request, impactado);
     }
 
@@ -100,23 +99,28 @@ public class MovimientoInsumoServiceImpl implements MovimientoInsumoService {
         movimiento.setTipo(request.getTipo());
         movimiento.setStock(request.getStock());
         movimiento.setImpactado(impactado);
-        movimiento.setCreationUsername(randomUsername());
         movimiento.setNombre(request.getNombre());
         movimiento.setCategoria(request.getCategoria());
         movimiento.setMarca(request.getMarca());
         movimiento.setUnidad(request.getUnidad());
         movimiento.setLote(request.getLote());
         movimiento.setProveedor(request.getProveedor());
+        movimiento.setEmpleado(request.getLegajo());
+        movimiento.setFechaHora(LocalDateTime.now());
         return movimiento;
     }
 
     @Override
-    public List<MovimientoInsumo> obtenerTodosLosMovimientos() {
-        return movimientoDao.findAll();
+    public List<MoviemientoInsumoResponse> obtenerTodosLosMovimientos() {
+    	return  movimientoDao.findAll().stream()
+    			.map(m -> new MoviemientoInsumoResponse(m,empleadosDao.buscarPorLegajo(m.getEmpleado())))
+    			.toList();
     }
 
     @Override
-    public List<MovimientoInsumo> obtenerTodosLosIngresos() {
-        return movimientoDao.findByTipoIgnoreCase("ingreso");
+    public List<MoviemientoInsumoResponse> obtenerTodosLosIngresos() {
+        return movimientoDao.findByTipoIgnoreCase("ingreso").stream()
+        		.map(m -> new MoviemientoInsumoResponse(m,empleadosDao.buscarPorLegajo(m.getEmpleado())))
+        		.toList();
     }
 }

@@ -1,5 +1,6 @@
 package com.java.tp_principal_backend.controller;
 
+import com.java.tp_principal_backend.dto.MoviemientoInsumoResponse;
 import com.java.tp_principal_backend.dto.MovimientoInsumoRequest;
 import com.java.tp_principal_backend.model.MovimientoInsumo;
 import com.java.tp_principal_backend.services.MovimientoInsumoService;
@@ -23,14 +24,14 @@ public class MovimientoInsumoController {
     }
 
     @GetMapping("/obtener")
-    public ResponseEntity<List<MovimientoInsumo>> obtenerMovimiento() {
-        List<MovimientoInsumo> movimientos = movimientoService.obtenerTodosLosMovimientos();
+    public ResponseEntity<List<MoviemientoInsumoResponse>> obtenerMovimiento() {
+        List<MoviemientoInsumoResponse> movimientos = movimientoService.obtenerTodosLosMovimientos();
         return ResponseEntity.ok(movimientos);
     }
 
     @GetMapping("/obtener-ingreso")
-    public ResponseEntity<List<MovimientoInsumo>> obtenerIngreso() {
-        List<MovimientoInsumo> ingresos = movimientoService.obtenerTodosLosIngresos();
+    public ResponseEntity<List<MoviemientoInsumoResponse>> obtenerIngreso() {
+        List<MoviemientoInsumoResponse> ingresos = movimientoService.obtenerTodosLosIngresos();
         return ResponseEntity.ok(ingresos);
     }
 }

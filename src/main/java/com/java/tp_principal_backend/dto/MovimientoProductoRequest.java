@@ -15,4 +15,5 @@ public class MovimientoProductoRequest {
     private String unidad;
     private String lote;
     private String nombre;
+    private String legajo;
 }

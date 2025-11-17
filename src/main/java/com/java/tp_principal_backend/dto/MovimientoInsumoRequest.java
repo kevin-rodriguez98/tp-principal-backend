@@ -15,4 +15,5 @@ public class MovimientoInsumoRequest {
     private String unidad;
     private String lote;
     private String proveedor;
+    private String legajo;
 }

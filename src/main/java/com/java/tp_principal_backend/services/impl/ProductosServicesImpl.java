@@ -3,7 +3,7 @@ package com.java.tp_principal_backend.services.impl;
 import com.java.tp_principal_backend.data.EmpleadosDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.dto.ProductoRequest;
-import com.java.tp_principal_backend.model.Empleados;
+import com.java.tp_principal_backend.dto.ProductosResponse;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.ProductosServices;
@@ -29,8 +29,10 @@ public class ProductosServicesImpl implements ProductosServices {
     private EmpleadosDao empleadosDao;
 
     @Override
-    public List<Producto> obtenerTodosLosProductos() {
-        return productosDao.findAll();
+    public List<ProductosResponse> obtenerTodosLosProductos() {
+    	return productosDao.findAll().stream()
+    			.map(P -> new ProductosResponse(P,empleadosDao.buscarPorLegajo(P.getEmpleados())))
+    			.toList();
     }
 
     @Override
@@ -40,10 +42,7 @@ public class ProductosServicesImpl implements ProductosServices {
         if (existente.isPresent()) {
             throw new IllegalArgumentException("Ya existe un producto con el código: " + request.getCodigo());
         }
-        
-        Empleados empleado = empleadosDao.buscarPorLegajo(request.getLegajoResponsable() == null? "100" : request.getLegajoResponsable());
 
-        // 2️⃣ Crear nuevo producto
         Producto producto = new Producto();
         producto.setCodigo(request.getCodigo());
         producto.setNombre(request.getNombre());
@@ -51,10 +50,11 @@ public class ProductosServicesImpl implements ProductosServices {
         producto.setLinea(request.getLinea());
         producto.setStock(BigDecimal.ZERO);
         producto.setUnidad(request.getUnidad());
+        producto.setEmpleados(request.getLegajoResponsable());
+        producto.setCreationUsername("");
         
-        producto.setEmpleados(empleado);
-        producto.setCreationUsername(empleado.getLegajo() +" - "+ empleado.getNombre());
         Producto response =  productosDao.save(producto);
+        
         TiempoProduccion tiempoInicial = new TiempoProduccion();
         tiempoInicial.setProducto(producto);
         tiempoInicial.setTiempoPorUnidad(BigDecimal.ZERO);
