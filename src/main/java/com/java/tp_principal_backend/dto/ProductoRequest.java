@@ -10,4 +10,5 @@ public class ProductoRequest {
     private String linea;
     private String unidad;
     private String legajoResponsable;
+    private String presentacion;
 }

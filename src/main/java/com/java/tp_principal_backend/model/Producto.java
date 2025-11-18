@@ -48,9 +48,6 @@ public class Producto {
 
     @Column(name = "presentacion")
     private String presentacion;
-
-    @Column(name= "envasado")
-    private String envasado;
     
     @Column(name = "legajo_empleado")
     private String empleados;

@@ -52,6 +52,7 @@ public class ProductosServicesImpl implements ProductosServices {
         producto.setUnidad(request.getUnidad());
         producto.setEmpleados(request.getLegajoResponsable());
         producto.setCreationUsername("");
+        producto.setPresentacion(request.getPresentacion());
         
         Producto response =  productosDao.save(producto);
         
