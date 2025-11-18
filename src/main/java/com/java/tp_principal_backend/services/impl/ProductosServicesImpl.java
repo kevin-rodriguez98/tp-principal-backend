@@ -34,6 +34,7 @@ public class ProductosServicesImpl implements ProductosServices {
     			.map(P -> new ProductosResponse(P,empleadosDao.buscarPorLegajo(P.getEmpleados())))
     			.toList();
     }
+    
 
     @Override
     public Producto agregarProducto(ProductoRequest request) {

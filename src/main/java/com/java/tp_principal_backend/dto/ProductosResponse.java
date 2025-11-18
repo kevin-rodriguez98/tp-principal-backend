@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 public class ProductosResponse {
-	private Producto producto;
+	private ProductoDTO producto;
 	private Empleados empleado;
 	
 	public ProductosResponse(Producto producto, Empleados empleado) {
-		this.producto = producto;
+		this.producto = new ProductoDTO(producto);
 		this.empleado = empleado;
 	}
 }
