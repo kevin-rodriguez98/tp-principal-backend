@@ -4,8 +4,8 @@ import com.java.tp_principal_backend.data.EmpleadosDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.dto.ProductoRequest;
 import com.java.tp_principal_backend.dto.ProductosResponse;
+import com.java.tp_principal_backend.dto.TiempoProduccionRequest;
 import com.java.tp_principal_backend.model.Producto;
-import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.ProductosServices;
 import com.java.tp_principal_backend.services.TiempoProduccionService;
 
@@ -57,9 +57,10 @@ public class ProductosServicesImpl implements ProductosServices {
         
         Producto response =  productosDao.save(producto);
         
-        TiempoProduccion tiempoInicial = new TiempoProduccion();
-        tiempoInicial.setProducto(producto);
-        tiempoInicial.setTiempoPorUnidad(BigDecimal.ZERO);
+        TiempoProduccionRequest tiempoInicial = new TiempoProduccionRequest();
+        tiempoInicial.setCodigoProducto(response.getCodigo());
+        tiempoInicial.setTiempoCiclo(BigDecimal.ZERO);
+        tiempoInicial.setTiempoPreparacion(BigDecimal.ZERO);
         tiempoProduccionService.agregar(tiempoInicial);
         return response;
     }

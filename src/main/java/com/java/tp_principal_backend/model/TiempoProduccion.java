@@ -21,18 +21,12 @@ public class TiempoProduccion {
     @JoinColumn(name = "producto_id", unique = true)
     private Producto producto;
 
-    @Column(name = "tiempo_por_unidad")
-    private BigDecimal tiempoPorUnidad;
+    @Column(name = "tiempo_preparacion")
+    private BigDecimal tiempoPreparacion;
 
-    @Column(name = "etapa")
-    private String etapa;
-
-    @Column(name = "stock_soportado")
-    private Integer stockSoportado;
-
-    @Column(name = "unidad")
-    private String unidad;
-
-    @Column(name = "tiempo_etapa")
-    private Integer tiempoEtapa;
+    @Column(name = "tiempo_ciclo")
+    private BigDecimal tiempoCiclo;
+    
+    @Column(name = "cantidad_max_tanda")
+    private BigDecimal cantidaTanda;
 }

@@ -1,5 +1,6 @@
 package com.java.tp_principal_backend.services;
 
+import com.java.tp_principal_backend.dto.TiempoProduccionRequest;
 import com.java.tp_principal_backend.dto.TiempoProduccionResponse;
 import com.java.tp_principal_backend.model.TiempoProduccion;
 
@@ -7,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface TiempoProduccionService {
-    TiempoProduccion agregar(TiempoProduccion tiempo);
+	TiempoProduccion agregar(TiempoProduccionRequest tiempo);
     List<TiempoProduccion> obtenerTodos();
     BigDecimal calcularTiempoTotal(String codigoProducto, BigDecimal cantidad);
     TiempoProduccionResponse obtenerTiempoPorProducto(String codigoProducto);

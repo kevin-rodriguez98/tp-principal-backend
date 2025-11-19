@@ -20,13 +20,7 @@ public class TiempoProduccionController {
 
     @PostMapping("/agregar")
     public ResponseEntity<TiempoProduccion> agregar(@RequestBody TiempoProduccionRequest request) {
-        TiempoProduccion tiempo = new TiempoProduccion();
-        tiempo.setTiempoPorUnidad(request.getTiempoPorUnidad());
-        tiempo.setProducto(new com.java.tp_principal_backend.model.Producto() {{
-            setCodigo(request.getCodigoProducto());
-        }});
-
-        return ResponseEntity.ok(tiempoService.agregar(tiempo));
+        return ResponseEntity.ok(tiempoService.agregar(request));
     }
 
     @GetMapping("/obtener")

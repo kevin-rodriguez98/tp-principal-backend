@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface TiempoProduccionDao extends JpaRepository<TiempoProduccion, Long> {
     Optional<TiempoProduccion> findByProductoCodigo(String codigoProducto);
 
-    @Query("SELECT t.tiempoEtapa FROM TiempoProduccion t WHERE t.etapa = :etapa")
+    /*@Query("SELECT t.tiempoEtapa FROM TiempoProduccion t WHERE t.etapa = :etapa")
     Integer findTiempoEtapaByEtapa(String etapa);
 
     @Query("SELECT SUM(t.tiempoEtapa) FROM TiempoProduccion t")
-    Integer sumAllTiempos();
+    Integer sumAllTiempos();*/
 }

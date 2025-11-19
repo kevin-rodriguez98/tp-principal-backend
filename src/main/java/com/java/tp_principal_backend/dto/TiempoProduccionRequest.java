@@ -7,5 +7,7 @@ import java.math.BigDecimal;
 @Data
 public class TiempoProduccionRequest {
     private String codigoProducto;
-    private BigDecimal tiempoPorUnidad;
+    private BigDecimal tiempoPreparacion;
+    private BigDecimal tiempoCiclo;
+    private BigDecimal maximoTanda;
 }

@@ -2,6 +2,7 @@ package com.java.tp_principal_backend.service;
 
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.data.TiempoProduccionDao;
+import com.java.tp_principal_backend.dto.TiempoProduccionRequest;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.impl.TiempoProduccionServiceImpl;
@@ -40,9 +41,9 @@ public class TiempoProduccionServiceTest {
         Producto producto = new Producto();
         producto.setCodigo("P1");
 
-        TiempoProduccion tiempo = new TiempoProduccion();
-        tiempo.setProducto(producto);
-        tiempo.setTiempoPorUnidad(BigDecimal.valueOf(2));
+        TiempoProduccionRequest tiempo = new TiempoProduccionRequest();
+        tiempo.setCodigoProducto("P001");
+        tiempo.setTiempoCiclo(BigDecimal.valueOf(2));
 
         when(productosDao.findByCodigo("P1")).thenReturn(Optional.of(producto));
         when(tiempoDao.findByProductoCodigo("P1")).thenReturn(Optional.empty());
@@ -52,7 +53,7 @@ public class TiempoProduccionServiceTest {
 
         assertNotNull(result);
         assertEquals("P1", result.getProducto().getCodigo());
-        assertEquals(BigDecimal.valueOf(2), result.getTiempoPorUnidad());
+        assertEquals(BigDecimal.valueOf(2), result.getTiempoCiclo());
     }
 
     @Disabled
@@ -61,9 +62,9 @@ public class TiempoProduccionServiceTest {
         Producto producto = new Producto();
         producto.setCodigo("P1");
 
-        TiempoProduccion tiempo = new TiempoProduccion();
-        tiempo.setProducto(producto);
-        tiempo.setTiempoPorUnidad(BigDecimal.valueOf(2));
+        TiempoProduccionRequest tiempo = new TiempoProduccionRequest();
+        tiempo.setCodigoProducto("P001");
+        tiempo.setTiempoCiclo(BigDecimal.valueOf(2));
 
         when(productosDao.findByCodigo("P1")).thenReturn(Optional.of(producto));
         when(tiempoDao.findByProductoCodigo("P1")).thenReturn(Optional.of(new TiempoProduccion()));
@@ -90,7 +91,7 @@ public class TiempoProduccionServiceTest {
 
         TiempoProduccion tiempo = new TiempoProduccion();
         tiempo.setProducto(producto);
-        tiempo.setTiempoPorUnidad(BigDecimal.valueOf(3));
+        tiempo.setTiempoCiclo(BigDecimal.valueOf(3));
 
         when(tiempoDao.findByProductoCodigo("P1")).thenReturn(Optional.of(tiempo));
 

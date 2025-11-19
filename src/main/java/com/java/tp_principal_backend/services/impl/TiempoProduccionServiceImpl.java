@@ -3,6 +3,7 @@ package com.java.tp_principal_backend.services.impl;
 import com.java.tp_principal_backend.data.OrdenProduccionDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.data.TiempoProduccionDao;
+import com.java.tp_principal_backend.dto.TiempoProduccionRequest;
 import com.java.tp_principal_backend.dto.TiempoProduccionResponse;
 import com.java.tp_principal_backend.model.OrdenProduccion;
 import com.java.tp_principal_backend.model.Producto;
@@ -31,15 +32,16 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
 
     @Override
     @Transactional
-    public TiempoProduccion agregar(TiempoProduccion tiempo) {
-    	try {
-    		Producto producto = productosDao.findByCodigo(tiempo.getProducto().getCodigo())
-                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-    		tiempo.setProducto(producto);
-    		 return tiempoDao.save(tiempo);
-		} catch (Exception e) {
-			 return tiempoDao.save(tiempo);
-		}
+    public TiempoProduccion agregar(TiempoProduccionRequest tiempoRequest) {
+    	TiempoProduccion tiempo = tiempoDao.findByProductoCodigo(tiempoRequest.getCodigoProducto())
+                .orElseThrow(() -> new IllegalArgumentException("Producto no tiene tiempo de producción definido"));
+    	Producto producto = productosDao.findByCodigo(tiempoRequest.getCodigoProducto())
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+    	tiempo.setProducto(producto);
+    	tiempo.setTiempoCiclo(tiempoRequest.getTiempoCiclo());
+    	tiempo.setTiempoPreparacion(tiempoRequest.getTiempoPreparacion());
+    	tiempo.setCantidaTanda(tiempoRequest.getMaximoTanda());
+    	return tiempoDao.save(tiempo);
     }
 
     @Override
@@ -51,30 +53,32 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
     public BigDecimal calcularTiempoTotal(String codigoProducto, BigDecimal cantidad) {
         TiempoProduccion tiempo = tiempoDao.findByProductoCodigo(codigoProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no tiene tiempo de producción definido"));
-
-        return tiempo.getTiempoPorUnidad().multiply(cantidad);
+        
+        BigDecimal tandas;;
+        if(cantidad.compareTo(tiempo.getCantidaTanda()) == -1) {
+        	tandas = BigDecimal.ONE;
+        }else
+        	tandas = cantidad.divide(tiempo.getCantidaTanda());
+      
+        BigDecimal tiempoProduccionTanda = tiempo.getCantidaTanda().multiply(tiempo.getTiempoCiclo());
+        BigDecimal tiempoCalculado =  tiempo.getTiempoPreparacion().add(tandas.multiply(tiempoProduccionTanda));
+        return tiempoCalculado.setScale(0, RoundingMode.HALF_UP);
     }
-
-    /*@Override
-    public BigDecimal obtenerTiempoPorProducto(String codigoProducto) {
-        TiempoProduccion tiempo = tiempoDao.findByProductoCodigo(codigoProducto)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontró tiempo de producción para el producto con código: " + codigoProducto));
-        return tiempo.getTiempoPorUnidad();
-    }*/
 
     @Override
     public TiempoProduccionResponse obtenerTiempoPorProducto(String codigoProducto) {
     	TiempoProduccion tiempo = tiempoDao.findByProductoCodigo(codigoProducto).orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
     	TiempoProduccionResponse response = new TiempoProduccionResponse();
-    	response.setCantidad(tiempo.getStockSoportado());
-    	response.setTiempoProduccion(tiempo.getTiempoPorUnidad());
-    	response.setUnidad(tiempo.getUnidad());
+    	response.setCantidadMaximaTanda(tiempo.getCantidaTanda());
+    	response.setTiempoCiclo(tiempo.getTiempoCiclo());
+    	response.setTiempoPreparacion(tiempo.getTiempoPreparacion());
+    	response.setTiempoTotal(tiempo.getTiempoCiclo().add(tiempo.getTiempoPreparacion()));
     	return response;
     }
 
 	@Override
 	public BigDecimal obtenertiemposProduccion(String codigoProducto) {
-		 OrdenProduccion orden = ordenDao.findByCodigoProducto(codigoProducto)
+		/* OrdenProduccion orden = ordenDao.findByCodigoProducto(codigoProducto)
 	                .orElseThrow(() -> new EntityNotFoundException(
 	                        "No se encontró la orden asociada al producto: " + codigoProducto));
 
@@ -99,7 +103,8 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
 	        if (tiempoBase == null) tiempoBase = 0;
 
 	        return BigDecimal.valueOf(tiempoBase)
-	                .multiply(multiplyFor);
+	                .multiply(multiplyFor);*/
+		return BigDecimal.ZERO;
 	}
     
 

@@ -8,7 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TiempoProduccionResponse {
-	private BigDecimal tiempoProduccion;
-	private String unidad;
-	private Integer cantidad;
+	private BigDecimal tiempoPreparacion;
+    private BigDecimal tiempoCiclo;
+    private BigDecimal tiempoTotal;
+    private BigDecimal cantidadMaximaTanda;
 }
