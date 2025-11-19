@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class EtapaRequest {
 	private int idOrden;
-	private String legajo;
+	private String responsable;
 	private String estado;
 	private Boolean isEstado;
 

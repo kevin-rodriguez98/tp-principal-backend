@@ -2,6 +2,7 @@ package com.java.tp_principal_backend.service;
 
 import com.java.tp_principal_backend.data.EmpleadosDao;
 import com.java.tp_principal_backend.data.ProductosDao;
+import com.java.tp_principal_backend.data.TiempoProduccionDao;
 import com.java.tp_principal_backend.dto.ProductoRequest;
 import com.java.tp_principal_backend.dto.ProductosResponse;
 import com.java.tp_principal_backend.model.Empleados;
@@ -28,7 +29,7 @@ public class ProductosServiceTest {
     private ProductosDao productosDao;
     
     @Mock
-    private TiempoProduccionService timpoProduccionSercvice; 
+    private TiempoProduccionDao timpoProduccionDao; 
     
     @Mock
     private EmpleadosDao empleadosDao;
@@ -66,7 +67,7 @@ public class ProductosServiceTest {
   
         when(empleadosDao.buscarPorLegajo(any())).thenReturn(new Empleados());
         when(productosDao.findByCodigo("P001")).thenReturn(Optional.empty());
-        when(timpoProduccionSercvice.agregar(any())).thenReturn(new TiempoProduccion());
+        when(timpoProduccionDao.save(any())).thenReturn(new TiempoProduccion());
         when(productosDao.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Producto resultado = productosServices.agregarProducto(request);
