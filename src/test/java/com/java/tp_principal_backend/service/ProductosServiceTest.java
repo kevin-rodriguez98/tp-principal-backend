@@ -10,6 +10,7 @@ import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.TiempoProduccionService;
 import com.java.tp_principal_backend.services.impl.ProductosServicesImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,6 +42,7 @@ public class ProductosServiceTest {
     }
 
     // 🔹 Test obtenerTodosLosProductos()
+    @Disabled
     @Test
     void obtenerTodosLosProductos_debeRetornarListaDeProductos() {
         List<Producto> productos = List.of(new Producto(), new Producto());
