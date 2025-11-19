@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TiempoProduccionServiceImpl implements TiempoProduccionService {
@@ -50,7 +52,7 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
     }
 
     @Override
-    public BigDecimal calcularTiempoTotal(String codigoProducto, BigDecimal cantidad) {
+    public Map<String, BigDecimal> calcularTiempoTotal(String codigoProducto, BigDecimal cantidad) {
         TiempoProduccion tiempo = tiempoDao.findByProductoCodigo(codigoProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no tiene tiempo de producción definido"));
         
@@ -62,7 +64,9 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
       
         BigDecimal tiempoProduccionTanda = tiempo.getCantidaTanda().multiply(tiempo.getTiempoCiclo());
         BigDecimal tiempoCalculado =  tiempo.getTiempoPreparacion().add(tandas.multiply(tiempoProduccionTanda));
-        return tiempoCalculado.setScale(0, RoundingMode.HALF_UP);
+        Map<String, BigDecimal> response = new HashMap<>();
+        response.put("tiempoEstimado", tiempoCalculado.setScale(0, RoundingMode.HALF_UP));
+        return response;
     }
 
     @Override

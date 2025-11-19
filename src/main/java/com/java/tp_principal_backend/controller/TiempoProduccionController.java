@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tiempo-produccion")
@@ -35,7 +36,7 @@ public class TiempoProduccionController {
     }
 
     @GetMapping("/calcular")
-    public ResponseEntity<BigDecimal> calcularTiempo(
+    public ResponseEntity<Map<String, BigDecimal>> calcularTiempo(
             @RequestParam String codigoProducto,
             @RequestParam BigDecimal cantidad) {
         return ResponseEntity.ok(tiempoService.calcularTiempoTotal(codigoProducto, cantidad));
