@@ -120,7 +120,7 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
 
     @Override
     public OrdenProduccion actualizarEtapa(EtapaRequest nuevoEstado) {
-    	Empleados empleado = empleadosDao.buscarPorLegajo(nuevoEstado.getResponsable());
+    	Empleados empleado = empleadosDao.buscarPorLegajo(nuevoEstado.getLegajo());
         OrdenProduccion orden = ordenDao.findById(nuevoEstado.getIdOrden()).orElseThrow(() -> new RuntimeException("orden no encontrado"));
         
         if(nuevoEstado.getIsEstado()) {

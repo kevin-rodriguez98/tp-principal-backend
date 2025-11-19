@@ -102,7 +102,7 @@ public class OrdenProduccionServiceTest {
         EtapaRequest etapa = new EtapaRequest();
         etapa.setEstado("EN_PRODUCCION");
         etapa.setIdOrden(1);
-        etapa.setResponsable("100");
+        etapa.setLegajo("100");
         OrdenProduccion result = ordenService.actualizarEtapa(etapa);
 
         assertEquals("EN_PRODUCCION", result.getEstado());
@@ -121,7 +121,7 @@ public class OrdenProduccionServiceTest {
         EtapaRequest etapa = new EtapaRequest();
         etapa.setEstado("EVALUACION");
         etapa.setIdOrden(1);
-        etapa.setResponsable("100");
+        etapa.setLegajo("100");
         OrdenProduccion result = ordenService.actualizarEtapa(etapa);
 
         assertEquals("CANCELADA", result.getEstado());
@@ -135,7 +135,7 @@ public class OrdenProduccionServiceTest {
         EtapaRequest etapa = new EtapaRequest();
         etapa.setEstado("CANCELDA");
         etapa.setIdOrden(1);
-        etapa.setResponsable("100");
+        etapa.setLegajo("100");
         when(ordenDao.findById(1)).thenReturn(Optional.of(orden));
 
         assertThrows(IllegalStateException.class, () -> ordenService.actualizarEtapa(etapa));
