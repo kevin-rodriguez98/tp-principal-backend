@@ -2,12 +2,12 @@ package com.java.tp_principal_backend.services.impl;
 
 import com.java.tp_principal_backend.data.EmpleadosDao;
 import com.java.tp_principal_backend.data.ProductosDao;
+import com.java.tp_principal_backend.data.TiempoProduccionDao;
 import com.java.tp_principal_backend.dto.ProductoRequest;
 import com.java.tp_principal_backend.dto.ProductosResponse;
-import com.java.tp_principal_backend.dto.TiempoProduccionRequest;
 import com.java.tp_principal_backend.model.Producto;
+import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.ProductosServices;
-import com.java.tp_principal_backend.services.TiempoProduccionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class ProductosServicesImpl implements ProductosServices {
     private ProductosDao productosDao;
     
     @Autowired
-    private TiempoProduccionService tiempoProduccionService;
+    private TiempoProduccionDao tiempoProduccionDao;
     
     @Autowired
     private EmpleadosDao empleadosDao;
@@ -57,11 +57,12 @@ public class ProductosServicesImpl implements ProductosServices {
         
         Producto response =  productosDao.save(producto);
         
-        TiempoProduccionRequest tiempoInicial = new TiempoProduccionRequest();
-        tiempoInicial.setCodigoProducto(response.getCodigo());
+        TiempoProduccion tiempoInicial = new TiempoProduccion();
+        tiempoInicial.setProducto(response);
         tiempoInicial.setTiempoCiclo(BigDecimal.ZERO);
         tiempoInicial.setTiempoPreparacion(BigDecimal.ZERO);
-        tiempoProduccionService.agregar(tiempoInicial);
+        tiempoInicial.setCantidaTanda(BigDecimal.ZERO);
+        tiempoProduccionDao.save(tiempoInicial);
         return response;
     }
 
