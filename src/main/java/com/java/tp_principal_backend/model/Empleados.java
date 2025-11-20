@@ -28,5 +28,11 @@ public class Empleados {
 	
 	@Column(nullable = true)
 	private String rol;
+	
+	@Column(nullable = true)
+	private String password;
+	
+	@Column(name="isprimeringreso", nullable = true)
+	private Boolean isPrimerIngreso;
 
 }

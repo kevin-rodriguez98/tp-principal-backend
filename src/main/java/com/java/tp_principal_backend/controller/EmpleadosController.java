@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.tp_principal_backend.dto.EmpleadoRequest;
-import com.java.tp_principal_backend.model.Empleados;
+import com.java.tp_principal_backend.dto.EmpleadoResponse;
+import com.java.tp_principal_backend.dto.LoginRequest;
 import com.java.tp_principal_backend.services.EmpleadoService;
 
 @RestController
@@ -23,10 +24,9 @@ public class EmpleadosController {
 	private EmpleadoService empleadosService;
 	
 	 @PostMapping("/agregar-empleado")
-	    public ResponseEntity<Empleados> agregarEmpleado(@RequestBody EmpleadoRequest request) {
+	    public ResponseEntity<EmpleadoResponse> agregarEmpleado(@RequestBody EmpleadoRequest request) {
 		 try {
-			 Empleados empleado = empleadosService.agregarEmpleado(request);
-		     return ResponseEntity.ok(empleado);
+		     return ResponseEntity.ok(empleadosService.agregarEmpleado(request));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}
@@ -34,10 +34,9 @@ public class EmpleadosController {
 	    }
 	 
 	 @GetMapping("/obtener-empleados")
-	 public ResponseEntity<List<Empleados>> obtenerEmpleados(){
+	 public ResponseEntity<List<EmpleadoResponse>> obtenerEmpleados(){
 		 try {
-			 List<Empleados> empleados = empleadosService.obtenerEmpleados();
-		     return ResponseEntity.ok(empleados);
+		     return ResponseEntity.ok(empleadosService.obtenerEmpleados());
 		 } catch (Exception e) {
 			 return ResponseEntity.noContent().build();
 		 }
@@ -51,6 +50,43 @@ public class EmpleadosController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("Hubo un error al intentar eliminar empleado de legajo: "+ legajo);
 		} 
+	 }
+	 
+	 @GetMapping("/login")
+	 public ResponseEntity<EmpleadoResponse> login(@RequestBody LoginRequest loginRequest){
+		 try {
+			return ResponseEntity.ok(empleadosService.login(loginRequest));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
+	 }
+	 
+	 @GetMapping("/obtener-empleado")
+	 public ResponseEntity<EmpleadoResponse> obtenerEmpleado(@PathVariable String legajo){
+		 try {
+			 return ResponseEntity.ok(empleadosService.obtenerEmpleado(legajo));
+		} catch (Exception e) {
+			return ResponseEntity.noContent().build();
+		}
+		 
+	 }
+	 
+	 @PostMapping("/modificar-empleado")
+	 public ResponseEntity<EmpleadoResponse> modificarEmpleado(@RequestBody EmpleadoRequest request){
+		 try {
+			return ResponseEntity.ok(empleadosService.modificarEmpleado(request));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
+	 }
+	 
+	 @PostMapping("/modificar-password")
+	 public ResponseEntity<EmpleadoResponse> modificarPassword(@RequestBody LoginRequest loginRequest){
+		 try {
+			 return ResponseEntity.ok(empleadosService.modificarPasword(loginRequest));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
 	 }
 	
 
