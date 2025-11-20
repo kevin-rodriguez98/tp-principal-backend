@@ -61,7 +61,7 @@ public class EmpleadosController {
 		}
 	 }
 	 
-	 @GetMapping("/obtener-empleado")
+	 @GetMapping("/obtener-empleado/{legajo}")
 	 public ResponseEntity<EmpleadoResponse> obtenerEmpleado(@PathVariable String legajo){
 		 try {
 			 return ResponseEntity.ok(empleadosService.obtenerEmpleado(legajo));
