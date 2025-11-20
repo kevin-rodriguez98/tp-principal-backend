@@ -40,9 +40,13 @@ public class OrdenProduccionController {
     }
 
     @PutMapping("/notificar-etapa")
-    public ResponseEntity<OrdenProduccion> notificarEtapa(@RequestBody EtapaRequest nuevaEtapa) {
-        OrdenProduccion ordenActualizada = ordenService.actualizarEtapa(nuevaEtapa);
-        return ResponseEntity.ok(ordenActualizada);
+    public ResponseEntity<?> notificarEtapa(@RequestBody EtapaRequest nuevaEtapa) {
+        try {
+			return ResponseEntity.ok(ordenService.actualizarEtapa(nuevaEtapa));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Cantidad insuficiente de insumos");
+		}
+       
     }
 
     @PutMapping("/agregar-nota/{ordenId}")

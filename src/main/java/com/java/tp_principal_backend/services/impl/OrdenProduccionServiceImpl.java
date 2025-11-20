@@ -124,10 +124,10 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         OrdenProduccion orden = ordenDao.findById(nuevoEstado.getIdOrden()).orElseThrow(() -> new RuntimeException("orden no encontrado"));
         
         if(nuevoEstado.getIsEstado()) {
-        	orden.setEstado(nuevoEstado.getEstado());
         	if(nuevoEstado.getEstado().equals("EN_PRODUCCION")) {
             	marcarEnProduccion(orden);
             }
+        	orden.setEstado(nuevoEstado.getEstado());
         }else
         	orden.setEtapa(nuevoEstado.getEstado());
         
