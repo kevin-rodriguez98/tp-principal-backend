@@ -74,13 +74,12 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
 
             if (insumo.getStock().compareTo(stockNecesario) < 0) {
                 impactado = false;
-                throw new IllegalArgumentException("Producto no encontrado");
+                throw new IllegalArgumentException("insumos insuficientes");
             } else {
                 insumo.setStock(insumo.getStock().subtract(stockNecesario));
                 insumosDao.save(insumo);
             }
         }
-
         return impactado;
     }
 

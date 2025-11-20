@@ -67,4 +67,7 @@ public class OrdenProduccion {
     @ManyToOne
     @JoinColumn(name = "empleado_id", nullable = false)
     private Empleados empleado;
+    
+    @Column()
+    private BigDecimal tiempoProduccion;
 }

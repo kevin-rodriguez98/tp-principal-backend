@@ -26,7 +26,11 @@ public class TiempoProduccionController {
 
     @GetMapping("/obtener")
     public ResponseEntity<List<TiempoProduccion>> obtenerTodos() {
-        return ResponseEntity.ok(tiempoService.obtenerTodos());
+    	try {
+    		return ResponseEntity.ok(tiempoService.obtenerTodos());
+		} catch (Exception e) {
+			return ResponseEntity.noContent().build();
+		}
     }
 
     @GetMapping("/obtener-tiempo-unitario")

@@ -7,6 +7,8 @@ import com.java.tp_principal_backend.dto.OrdenFinalizadaRequest;
 import com.java.tp_principal_backend.dto.OrdenProduccionNormalRequest;
 import com.java.tp_principal_backend.model.*;
 import com.java.tp_principal_backend.services.OrdenProduccionService;
+import com.java.tp_principal_backend.services.TiempoProduccionService;
+
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     
     @Autowired
     private EmpleadosDao empleadosDao;
+    
+    @Autowired
+    private TiempoProduccionService tiempoProduccionService;
 
     @Autowired
     private MovimientoProductoServiceImpl movimientoProductoService;
@@ -93,8 +98,9 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     @Transactional
     public OrdenProduccion agregarOrdenNormal(OrdenProduccionNormalRequest request) {
     	Empleados empleado = empleadosDao.buscarPorLegajo(request.getLegajo()==null? "100":request.getLegajo());
+    	BigDecimal tiempoProduccion = (tiempoProduccionService.calcularTiempoTotal(request.getCodigoProducto(), request.getStockRequerido())).get("tiempoEstimado");
+    	
     	OrdenProduccion orden = new OrdenProduccion();
-
         orden.setProductoRequerido(request.getProductoRequerido());
         orden.setMarca(request.getMarca());
         orden.setEnvasado(request.getEnvasado());
@@ -103,17 +109,15 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         orden.setCodigoProducto(request.getCodigoProducto());
         orden.setFechaEntrega(request.getFechaEntrega());
         orden.setLote(request.getLote());
-
-        // Valores por defecto o calculados
-        orden.setEstado(
-                request.getEstado() != null ? request.getEstado() : "Evaluación"
-        );
+        orden.setEstado(request.getEstado() != null ? request.getEstado() : "Evaluación");
         orden.setCreationUsername(empleado.getNombre());
         orden.setFechaCreacion(LocalDateTime.now());
         orden.setImpactado(false);
         orden.setStockProducidoReal(BigDecimal.ZERO);
         orden.setEmpleado(empleado);
+        orden.setTiempoProduccion(tiempoProduccion);
         ordenDao.save(orden);
+        
         guradarHistorial(orden,empleado,request.getEstado());
         return orden;
     }

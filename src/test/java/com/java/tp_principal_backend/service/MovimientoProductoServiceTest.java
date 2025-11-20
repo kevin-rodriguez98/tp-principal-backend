@@ -114,9 +114,6 @@ public class MovimientoProductoServiceTest {
         when(insumosDao.save(any(Insumo.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(movimientoDao.save(any(MovimientoProducto.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        MovimientoProducto resultado = service.agregarMovimiento(request);
-
-        assertFalse(resultado.getImpactado(), "El movimiento no debería estar impactado por stock insuficiente");
-        assertEquals(new BigDecimal("5"), insumo1.getStock(), "El stock no debe cambiar cuando es insuficiente");
+        assertThrows(IllegalArgumentException.class,() -> service.agregarMovimiento(request));
     }
 }

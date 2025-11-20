@@ -1,15 +1,12 @@
 package com.java.tp_principal_backend.services.impl;
 
-import com.java.tp_principal_backend.data.OrdenProduccionDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.data.TiempoProduccionDao;
 import com.java.tp_principal_backend.dto.TiempoProduccionRequest;
 import com.java.tp_principal_backend.dto.TiempoProduccionResponse;
-import com.java.tp_principal_backend.model.OrdenProduccion;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.model.TiempoProduccion;
 import com.java.tp_principal_backend.services.TiempoProduccionService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +25,6 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
 
     @Autowired
     private ProductosDao productosDao;
-
-    @Autowired
-    private OrdenProduccionDao ordenDao;
 
     @Override
     @Transactional
