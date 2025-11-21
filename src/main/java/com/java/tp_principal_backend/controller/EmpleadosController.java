@@ -52,7 +52,7 @@ public class EmpleadosController {
 		} 
 	 }
 	 
-	 @GetMapping("/login")
+	 @PostMapping("/login")
 	 public ResponseEntity<EmpleadoResponse> login(@RequestBody LoginRequest loginRequest){
 		 try {
 			return ResponseEntity.ok(empleadosService.login(loginRequest));
