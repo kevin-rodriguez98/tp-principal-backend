@@ -30,12 +30,6 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     private ProductosDao productosDao;
 
     @Autowired
-    private InsumoPorProductoDao insumoPorProductoDao;
-
-    @Autowired
-    private InsumosDao insumoDao;
-
-    @Autowired
     private HistorialEtapaDao historialEtapaDao;
     
     @Autowired
@@ -58,34 +52,14 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     	OrdenProduccion orden = ordenDao.findById(ordenFinalizada.getOrdenId()).orElseThrow();
         Producto producto = productosDao.findByCodigo(orden.getCodigoProducto())
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-
         if (ordenFinalizada.getStockProducidoReal() == null) {
         	ordenFinalizada.setStockProducidoReal(orden.getStockRequerido());
         }
         orden.setStockProducidoReal(ordenFinalizada.getStockProducidoReal());
-        
-        if (Boolean.FALSE.equals(orden.getImpactado())) 
-        {
-            movimientoProductoService.egresoAutomatico(orden.getCodigoProducto(), ordenFinalizada.getStockProducidoReal(), ordenFinalizada.getDestino());
-            List<InsumoPorProducto> receta = insumoPorProductoDao.findByProductoId(producto.getId());
-
-            if (receta == null || receta.isEmpty()) {
-                log.warn("⚠ El producto {} no tiene insumos asociados. No se descontó receta.",
-                        producto.getCodigo());
-            } else {
-                for (InsumoPorProducto r : receta) {
-                    BigDecimal cantidadARestar = r.getStockNecesarioInsumo().multiply(ordenFinalizada.getStockProducidoReal());
-                    restarStockInsumo(r.getInsumo().getCodigo(),cantidadARestar );
-                    log.info("Insumo {} descontado: {} {}",r.getInsumo().getCodigo(),cantidadARestar,r.getInsumo().getUnidad());
-                }
-            }
-            orden.setImpactado(true);
-        }
-
+        movimientoProductoService.egresoAutomatico(orden.getCodigoProducto(), ordenFinalizada.getStockProducidoReal(), ordenFinalizada.getDestino());
         if (producto.getStock() == null) {
             producto.setStock(BigDecimal.ZERO);
         }
-        
         producto.setStock( producto.getStock().add(ordenFinalizada.getStockProducidoReal()));
         productosDao.save(producto);
         orden.setEstado("FINALIZADA");
@@ -166,32 +140,10 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
     	                     dto.setEtapa(h.getEtapa());
     	                     dto.setFechaCambio(h.getFechaCambio().format(formatter));
     	                     dto.setEmpleado(h.getEmpleado());
-    	                     return dto;
-    	                 })
+    	                     return dto;})
     	                 .toList();
     	
     	return historialEtapas;
-    }
-
-    private void restarStockInsumo(String codigoInsumo, BigDecimal cantidad) {
-
-        Insumo insumo = insumoDao.findByCodigo(codigoInsumo)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Insumo no encontrado para el código: " + codigoInsumo));
-
-        if (insumo.getStock() == null) {
-            insumo.setStock(BigDecimal.ZERO);
-        }
-
-        BigDecimal nuevoStock = insumo.getStock().subtract(cantidad);
-
-        if (nuevoStock.compareTo(BigDecimal.ZERO) < 0) {
-            log.warn("⚠ El insumo {} quedó con stock negativo al restar {}",
-                    codigoInsumo, cantidad);
-        }
-
-        insumo.setStock(nuevoStock);
-        insumoDao.save(insumo);
     }
     
     private OrdenProduccion marcarEnProduccion(OrdenProduccion orden) {
