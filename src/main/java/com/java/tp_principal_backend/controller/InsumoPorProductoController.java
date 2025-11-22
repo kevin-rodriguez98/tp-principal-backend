@@ -33,4 +33,15 @@ public class InsumoPorProductoController {
         List<InsumoNecesarioResponse> resultado = recetaService.calcularInsumosNecesarios(codigoProducto, cantidad);
         return ResponseEntity.ok(resultado);
     }
+    
+    @PostMapping("/eliminar")
+    public ResponseEntity<String> eliminarInsumo( @RequestParam String codigoProducto,@RequestParam String codigoInsumo){
+    	try {
+    		recetaService.eliminarInsumo(codigoProducto,codigoInsumo);
+        	return ResponseEntity.ok().body("El insumo se elimino correctamente de la receta");
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body("No se pudo eliminar le insumo");
+		}
+    	
+    }
 }

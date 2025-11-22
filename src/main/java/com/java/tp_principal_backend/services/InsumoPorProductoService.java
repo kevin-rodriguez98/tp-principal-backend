@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface InsumoPorProductoService {
     InsumoPorProducto agregarReceta(InsumoPorProductoRequest request);
-
     List<InsumoNecesarioResponse> calcularInsumosNecesarios(String codigoProducto, BigDecimal cantidadProducto);
+    void eliminarInsumo(String codigoProducto,String codigoInsumo);
 }

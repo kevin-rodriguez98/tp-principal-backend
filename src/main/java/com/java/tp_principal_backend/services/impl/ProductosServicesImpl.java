@@ -38,7 +38,6 @@ public class ProductosServicesImpl implements ProductosServices {
 
     @Override
     public Producto agregarProducto(ProductoRequest request) {
-        // 1️⃣ Verificar si ya existe un producto con ese código
         Optional<Producto> existente = productosDao.findByCodigo(request.getCodigo());
         if (existente.isPresent()) {
             throw new IllegalArgumentException("Ya existe un producto con el código: " + request.getCodigo());
@@ -68,11 +67,9 @@ public class ProductosServicesImpl implements ProductosServices {
 
     @Override
     public Producto editarProducto(String codigo, Map<String, Object> cambios) {
-        // 1️⃣ Buscar producto existente
         Producto producto = productosDao.findByCodigo(codigo)
                 .orElseThrow(() -> new IllegalArgumentException("No existe producto con código: " + codigo));
 
-        // 2️⃣ Aplicar cambios dinámicamente con validación
         cambios.forEach((clave, valor) -> {
             switch (clave) {
                 case "nombre" -> producto.setNombre((String) valor);
@@ -83,7 +80,6 @@ public class ProductosServicesImpl implements ProductosServices {
                 case "codigo" -> {
                     String nuevoCodigo = (String) valor;
 
-                    // ⚠️ Si el nuevo código es diferente, verificar duplicado
                     if (!nuevoCodigo.equals(producto.getCodigo())) {
                         boolean existe = productosDao.findByCodigo(nuevoCodigo).isPresent();
                         if (existe) {
@@ -95,17 +91,14 @@ public class ProductosServicesImpl implements ProductosServices {
             }
         });
 
-        // 3️⃣ Guardar cambios
         return productosDao.save(producto);
     }
 
     @Override
     public void eliminarProducto(String codigo) {
-        // 1️⃣ Buscar producto por código
         Producto producto = productosDao.findByCodigo(codigo)
                 .orElseThrow(() -> new IllegalArgumentException("No existe producto con el código: " + codigo));
 
-        // 2️⃣ Eliminar producto
         productosDao.delete(producto);
     }
 }

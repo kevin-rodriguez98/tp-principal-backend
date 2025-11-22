@@ -43,5 +43,10 @@ public class Insumo {
     private String proveedor;
 
     @Column
-    private String destino;
+    private Integer destino;
+    
+    @OneToOne
+    @JoinColumn(name = "id_locacion")
+    private Locacion locacion;
+    
 }

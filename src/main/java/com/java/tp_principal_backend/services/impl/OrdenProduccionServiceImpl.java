@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -56,7 +57,7 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         	ordenFinalizada.setStockProducidoReal(orden.getStockRequerido());
         }
         orden.setStockProducidoReal(ordenFinalizada.getStockProducidoReal());
-        movimientoProductoService.egresoAutomatico(orden.getCodigoProducto(), ordenFinalizada.getStockProducidoReal(), ordenFinalizada.getDestino());
+        movimientoProductoService.egresoAutomatico(orden.getCodigoProducto(), ordenFinalizada.getStockProducidoReal(), ordenFinalizada.getDestino(),orden.getLote());
         if (producto.getStock() == null) {
             producto.setStock(BigDecimal.ZERO);
         }
@@ -153,4 +154,16 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         return ordenDao.save(orden);
     }
 
+	@Override
+	public List<OrdenProduccion> obtenerOrdenesUltimosdias(Integer dias) {
+		 LocalDateTime fechaDesde = LocalDateTime.now().minusDays(dias);
+		return ordenDao.findByFechaCreacionGreaterThanEqual(fechaDesde);
+	}
+
+	@Override
+	public List<OrdenProduccion> obtenerOrdenesFecha(LocalDate fecha) {
+		LocalDateTime desde = fecha.atStartOfDay();
+		LocalDateTime hasta = fecha.plusDays(1).atStartOfDay();
+		return ordenDao.findByFechaCreacionBetween(desde, hasta);
+	}
 }

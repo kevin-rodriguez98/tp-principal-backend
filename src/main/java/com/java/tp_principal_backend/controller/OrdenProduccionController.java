@@ -7,9 +7,11 @@ import com.java.tp_principal_backend.dto.OrdenProduccionNormalRequest;
 import com.java.tp_principal_backend.model.OrdenProduccion;
 import com.java.tp_principal_backend.services.OrdenProduccionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -63,4 +65,23 @@ public class OrdenProduccionController {
         }
         return ResponseEntity.ok(historial);
     }
+    
+    @GetMapping("/obtener-ultimas-orden/{dias}")
+    public ResponseEntity<List<OrdenProduccion>> obtenerUltimasOrdenes(@PathVariable Integer dias){
+    	try {
+			return ResponseEntity.ok(ordenService.obtenerOrdenesUltimosdias(dias));
+		} catch (Exception e) {
+			return ResponseEntity.noContent().build();
+		}
+    }
+    
+    @GetMapping("/obtener-ordenes-dia")
+    public ResponseEntity<List<OrdenProduccion>> obtenerOrdenesFecha( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha){
+    	try {
+			return ResponseEntity.ok(ordenService.obtenerOrdenesFecha(fecha));
+		} catch (Exception e) {
+			return ResponseEntity.noContent().build();
+		}
+    }
+    
 }

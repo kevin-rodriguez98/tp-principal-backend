@@ -17,12 +17,6 @@ public class MovimientoProductoController {
     @Autowired
     private MovimientoProductoService movimientoService;
 
-    @PostMapping("/agregarautomatizado")
-    public ResponseEntity<MovimientoProducto> agregarMovimientoAutomatic(@RequestBody MovimientoProductoRequest request) {
-        MovimientoProducto movimiento = movimientoService.agregarMovimiento(request);
-        return ResponseEntity.ok(movimiento);
-    }
-
     @PostMapping("/agregar")
     public ResponseEntity<MovimientoProducto> agregarMovimientoNormal(@RequestBody MovimientoProductoRequest request) {
         MovimientoProducto movimiento = movimientoService.agregarMovimientoNormal(request);

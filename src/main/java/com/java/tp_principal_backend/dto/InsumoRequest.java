@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+import com.java.tp_principal_backend.model.Locacion;
+
 @Data
 public class InsumoRequest {
     private String codigo;
@@ -15,4 +17,5 @@ public class InsumoRequest {
     private Integer umbralMinimoStock;
     private String proveedor;
     private String destino;
+    private Locacion locacion;
 }

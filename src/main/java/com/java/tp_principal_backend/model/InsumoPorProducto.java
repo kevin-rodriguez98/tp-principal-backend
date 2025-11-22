@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class InsumoPorProducto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     // 🔗 Relación con Producto
     @ManyToOne

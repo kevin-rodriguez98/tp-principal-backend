@@ -8,8 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface MovimientoProductoService {
-    MovimientoProducto agregarMovimiento(MovimientoProductoRequest request);
-    MovimientoProducto egresoAutomatico(String codigoProducto, BigDecimal cantidad, String destino);
+    MovimientoProducto egresoAutomatico(String codigoProducto, BigDecimal cantidad, String destino, String lote);
     List<MovimientoProductoResponse>  obtener();
     MovimientoProducto agregarMovimientoNormal(MovimientoProductoRequest request);
 }

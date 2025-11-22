@@ -1,8 +1,10 @@
 package com.java.tp_principal_backend.services.impl;
 
 import com.java.tp_principal_backend.data.InsumosDao;
+import com.java.tp_principal_backend.data.LocacionDao;
 import com.java.tp_principal_backend.dto.InsumoRequest;
 import com.java.tp_principal_backend.model.Insumo;
+import com.java.tp_principal_backend.model.Locacion;
 import com.java.tp_principal_backend.services.InsumosServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class InsumosServicesImpl implements InsumosServices {
 
     @Autowired
     private InsumosDao insumosDao;
+    
+    @Autowired
+    private LocacionDao locacionDao;
 
     @Override
     public Insumo agregarInsumo(InsumoRequest request) {
@@ -25,13 +30,16 @@ public class InsumosServicesImpl implements InsumosServices {
             log.info("El insumo con código {} ya se encuentra dado de alta", request.getCodigo());
             throw new RuntimeException("Error al agregar insumo");
         }
-
+        
+        Locacion locacion = locacionDao.save(request.getLocacion());
+        
         Insumo insumo = new Insumo();
         insumo.setCodigo(request.getCodigo());
         insumo.setNombre(request.getNombre());
         insumo.setCategoria(request.getCategoria());
         insumo.setMarca(request.getMarca());
         insumo.setUnidad(request.getUnidad());
+        insumo.setLocacion(locacion);
         if (request.getUmbralMinimoStock() != null) {
             insumo.setUmbralMinimoStock(request.getUmbralMinimoStock());
         }

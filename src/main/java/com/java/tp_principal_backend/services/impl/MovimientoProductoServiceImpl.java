@@ -34,35 +34,6 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
 
     @Autowired
     private InsumoPorProductoDao recetaDao;
-
-    @Override
-    @Transactional
-    public MovimientoProducto agregarMovimiento(MovimientoProductoRequest request) {
-
-        if (!"egreso".equalsIgnoreCase(request.getTipo())) {
-            throw new IllegalArgumentException("Solo se permiten movimientos de tipo 'egreso'.");
-        }
-        Producto producto = productosDao.findByCodigo(request.getCodigoProducto())
-                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-
-        boolean impactado = restarInsumos(producto, request.getCantidad());
-
-        MovimientoProducto movimiento = new MovimientoProducto();
-        movimiento.setCodigoProducto(request.getCodigoProducto());
-        movimiento.setCantidad(request.getCantidad());
-        movimiento.setTipo(request.getTipo());
-        movimiento.setImpactado(impactado);
-        movimiento.setDestino(request.getDestino());
-        movimiento.setCreationUsername("");
-        movimiento.setFecha(LocalDateTime.now());
-        movimiento.setCategoria(request.getCategoria());
-        movimiento.setMarca(request.getMarca());
-        movimiento.setUnidad(request.getUnidad());
-        movimiento.setLote(request.getLote());
-        movimiento.setNombre(request.getNombre());
-        movimiento.setEmpleado(request.getLegajo());
-        return movimientoDao.save(movimiento);
-    }
     
     public boolean restarInsumos(Producto producto, BigDecimal cantidad) {
         List<InsumoPorProducto> recetas = recetaDao.findByProductoId(producto.getId());
@@ -85,7 +56,7 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
 
     @Override
     @Transactional
-    public MovimientoProducto egresoAutomatico(String codigoProducto, BigDecimal cantidad, String destino) {
+    public MovimientoProducto egresoAutomatico(String codigoProducto, BigDecimal cantidad, String destino, String lote) {
         Producto producto = productosDao.findByCodigo(codigoProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
@@ -102,7 +73,7 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
         movimiento.setCategoria(producto.getCategoria());
         movimiento.setMarca(producto.getLinea());
         movimiento.setUnidad(producto.getUnidad());
-        movimiento.setLote(producto.getLote());
+        movimiento.setLote(lote);
         movimiento.setNombre(producto.getNombre());
 
         return movimientoDao.save(movimiento);
@@ -119,20 +90,32 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
     @Override
     @Transactional
     public MovimientoProducto agregarMovimientoNormal(MovimientoProductoRequest request) {
-        MovimientoProducto movimiento = new MovimientoProducto();
-        movimiento.setCodigoProducto(request.getCodigoProducto());
-        movimiento.setCantidad(request.getCantidad());
-        movimiento.setTipo(request.getTipo());
-        movimiento.setDestino(request.getDestino());
-        movimiento.setCategoria(request.getCategoria());
-        movimiento.setMarca(request.getMarca());
-        movimiento.setUnidad(request.getUnidad());
-        movimiento.setLote(request.getLote());
-        movimiento.setNombre(request.getNombre());
-        movimiento.setImpactado(false);
-        movimiento.setCreationUsername("");
-        movimiento.setFecha(LocalDateTime.now());
-        movimiento.setEmpleado(request.getLegajo());
-        return movimientoDao.save(movimiento);
+    	
+    	Producto producto = productosDao.findByCodigo(request.getCodigoProducto())
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+    	
+    	if(request.getCantidad().compareTo(producto.getStock()) < 0 ) {
+    		
+    		producto.setStock(producto.getStock().subtract(request.getCantidad()));
+    		productosDao.save(producto);
+    		
+    		MovimientoProducto movimiento = new MovimientoProducto();
+            movimiento.setCodigoProducto(request.getCodigoProducto());
+            movimiento.setCantidad(request.getCantidad());
+            movimiento.setTipo(request.getTipo());
+            movimiento.setDestino(request.getDestino());
+            movimiento.setCategoria(request.getCategoria());
+            movimiento.setMarca(request.getMarca());
+            movimiento.setUnidad(request.getUnidad());
+            movimiento.setLote(request.getLote());
+            movimiento.setNombre(request.getNombre());
+            movimiento.setImpactado(false);
+            movimiento.setCreationUsername("");
+            movimiento.setFecha(LocalDateTime.now());
+            movimiento.setEmpleado(request.getLegajo());
+            return movimientoDao.save(movimiento);
+    	}
+    	else
+    		throw new RuntimeException("No hay sufuciente insumos para egresar");
     }
 }

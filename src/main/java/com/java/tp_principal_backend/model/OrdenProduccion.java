@@ -47,7 +47,7 @@ public class OrdenProduccion {
     private String marca;
 
     @Column(name = "fecha_creacion")
-    private LocalDateTime fechaCreacion = LocalDateTime.now();
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "impactado")
     private Boolean impactado = false;

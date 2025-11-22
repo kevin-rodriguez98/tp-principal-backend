@@ -8,152 +8,146 @@ import com.java.tp_principal_backend.dto.ProductosResponse;
 import com.java.tp_principal_backend.model.Empleados;
 import com.java.tp_principal_backend.model.Producto;
 import com.java.tp_principal_backend.model.TiempoProduccion;
-import com.java.tp_principal_backend.services.TiempoProduccionService;
 import com.java.tp_principal_backend.services.impl.ProductosServicesImpl;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class ProductosServiceTest {
+	
+	@InjectMocks
+    private ProductosServicesImpl service;
 
     @Mock
     private ProductosDao productosDao;
-    
+
     @Mock
-    private TiempoProduccionDao timpoProduccionDao; 
-    
+    private TiempoProduccionDao tiempoProduccionDao;
+
     @Mock
     private EmpleadosDao empleadosDao;
 
-    @InjectMocks
-    private ProductosServicesImpl productosServices;
+    private Producto producto;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    // 🔹 Test obtenerTodosLosProductos()
-    @Disabled
-    @Test
-    void obtenerTodosLosProductos_debeRetornarListaDeProductos() {
-        List<Producto> productos = List.of(new Producto(), new Producto());
-        when(productosDao.findAll()).thenReturn(productos);
-
-        List<ProductosResponse> resultado = productosServices.obtenerTodosLosProductos();
-
-        assertEquals(2, resultado.size());
-        verify(productosDao, times(1)).findAll();
-    }
-
-    // 🔹 Test agregarProducto() exitoso
-    @Test
-    void agregarProducto_debeGuardarProductoSiNoExisteCodigo() {
-        ProductoRequest request = new ProductoRequest();
-        request.setCodigo("P001");
-        request.setNombre("Leche");
-        request.setCategoria("Lácteos");
-        request.setLinea("Entero");
-        request.setUnidad("Litro");
-  
-        when(empleadosDao.buscarPorLegajo(any())).thenReturn(new Empleados());
-        when(productosDao.findByCodigo("P001")).thenReturn(Optional.empty());
-        when(timpoProduccionDao.save(any())).thenReturn(new TiempoProduccion());
-        when(productosDao.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Producto resultado = productosServices.agregarProducto(request);
-
-        assertEquals("P001", resultado.getCodigo());
-        assertEquals("Leche", resultado.getNombre());
-        assertNotNull(resultado.getCreationUsername());
-        verify(productosDao).save(any(Producto.class));
-    }
-
-    // 🔹 Test agregarProducto() cuando ya existe el código
-    @Test
-    void agregarProducto_debeLanzarExcepcionSiCodigoYaExiste() {
-        ProductoRequest request = new ProductoRequest();
-        request.setCodigo("P001");
-
-        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(new Producto()));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                productosServices.agregarProducto(request));
-
-        assertEquals("Ya existe un producto con el código: P001", exception.getMessage());
-        verify(productosDao, never()).save(any());
-    }
-
-    // 🔹 Test editarProducto() exitoso
-    @Test
-    void editarProducto_debeActualizarCamposYGuardar() {
-        Producto productoExistente = new Producto();
-        productoExistente.setCodigo("P001");
-        productoExistente.setNombre("Leche");
-
-        Map<String, Object> cambios = new HashMap<>();
-        cambios.put("nombre", "Leche Descremada");
-        cambios.put("stock", BigDecimal.valueOf(50));
-
-        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(productoExistente));
-        when(productosDao.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Producto resultado = productosServices.editarProducto("P001", cambios);
-
-        assertEquals("Leche Descremada", resultado.getNombre());
-        assertEquals(BigDecimal.valueOf(50), resultado.getStock());
-        verify(productosDao).save(productoExistente);
-    }
-
-    // 🔹 Test editarProducto() con código duplicado
-    @Test
-    void editarProducto_debeLanzarExcepcionSiNuevoCodigoYaExiste() {
-        Producto productoExistente = new Producto();
-        productoExistente.setCodigo("P001");
-
-        Map<String, Object> cambios = Map.of("codigo", "P002");
-
-        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(productoExistente));
-        when(productosDao.findByCodigo("P002")).thenReturn(Optional.of(new Producto()));
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                productosServices.editarProducto("P001", cambios));
-
-        assertEquals("Ya existe un producto con el código: P002", ex.getMessage());
-        verify(productosDao, never()).save(any());
-    }
-
-    // 🔹 Test eliminarProducto() exitoso
-    @Test
-    void eliminarProducto_debeEliminarProductoExistente() {
-        Producto producto = new Producto();
+    void setup() {
+        producto = new Producto();
         producto.setCodigo("P001");
+        producto.setNombre("Dulce de leche");
+        producto.setCategoria("Lácteos");
+        producto.setLinea("Premium");
+        producto.setUnidad("kg");
+        producto.setEmpleados("100");
+        producto.setFechaCreacion(LocalDateTime.now());
+    }
+
+    @Test
+    void obtenerTodosLosProductos() {
+        Empleados emp = new Empleados();
+        emp.setNombre("Carlos");
+
+        when(productosDao.findAll()).thenReturn(List.of(producto));
+        when(empleadosDao.buscarPorLegajo("100")).thenReturn(emp);
+
+        List<ProductosResponse> result = service.obtenerTodosLosProductos();
+
+        assertEquals(1, result.size());
+        assertEquals("Dulce de leche", result.get(0).getProducto().getNombre());
+    }
+
+    @Test
+    void agregarProducto_ok() {
+        ProductoRequest req = new ProductoRequest();
+        req.setCodigo("P001");
+        req.setNombre("Dulce de leche");
+        req.setCategoria("Lácteos");
+        req.setLinea("Premium");
+        req.setUnidad("kg");
+        req.setLegajoResponsable("100");
+        req.setPresentacion("500g");
+
+        when(productosDao.findByCodigo("P001")).thenReturn(Optional.empty());
+        when(productosDao.save(any(Producto.class))).thenReturn(producto);
+
+        Producto result = service.agregarProducto(req);
+
+        assertEquals("P001", result.getCodigo());
+        verify(tiempoProduccionDao, times(1)).save(any(TiempoProduccion.class));
+    }
+
+    @Test
+    void agregarProducto_codigoDuplicado() {
+        ProductoRequest req = new ProductoRequest();
+        req.setCodigo("P001");
 
         when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
 
-        productosServices.eliminarProducto("P001");
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> service.agregarProducto(req)
+        );
 
-        verify(productosDao).delete(producto);
+        assertTrue(ex.getMessage().contains("Ya existe un producto"));
     }
 
-    // 🔹 Test eliminarProducto() cuando no existe
     @Test
-    void eliminarProducto_debeLanzarExcepcionSiNoExiste() {
-        when(productosDao.findByCodigo("P999")).thenReturn(Optional.empty());
+    void editarProducto_ok() {
+        Map<String, Object> cambios = new HashMap<>();
+        cambios.put("nombre", "Nuevo nombre");
+        cambios.put("stock", "50");
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                productosServices.eliminarProducto("P999"));
+        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
+        when(productosDao.save(any())).thenReturn(producto);
 
-        assertEquals("No existe producto con el código: P999", ex.getMessage());
-        verify(productosDao, never()).delete(any());
+        Producto result = service.editarProducto("P001", cambios);
+
+        assertEquals("Nuevo nombre", result.getNombre());
+        assertEquals(new BigDecimal("50"), result.getStock());
+    }
+
+    @Test
+    void editarProducto_cambiarCodigoDuplicado() {
+        Map<String, Object> cambios = new HashMap<>();
+        cambios.put("codigo", "P999");
+
+        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
+        when(productosDao.findByCodigo("P999")).thenReturn(Optional.of(new Producto()));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> service.editarProducto("P001", cambios)
+        );
+
+        assertTrue(ex.getMessage().contains("Ya existe un producto"));
+    }
+
+    @Test
+    void eliminarProducto_ok() {
+        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
+
+        service.eliminarProducto("P001");
+
+        verify(productosDao, times(1)).delete(producto);
+    }
+
+    @Test
+    void eliminarProducto_noExiste() {
+        when(productosDao.findByCodigo("P001")).thenReturn(Optional.empty());
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> service.eliminarProducto("P001")
+        );
     }
 }

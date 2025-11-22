@@ -30,36 +30,27 @@ public class InsumoPorProductoServiceImpl implements InsumoPorProductoService {
 
     @Override
     public InsumoPorProducto agregarReceta(InsumoPorProductoRequest request) {
-
-        // 1️⃣ Buscar producto por código
         Producto producto = productosDao.findByCodigo(request.getCodigoProducto())
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
-        // 2️⃣ Buscar insumo por código
         Insumo insumo = insumosDao.findByCodigo(request.getInsumo().getCodigoInsumo())
                 .orElseThrow(() -> new IllegalArgumentException("Insumo no encontrado"));
 
-        // 3️⃣ Crear registro de receta
         InsumoPorProducto receta = new InsumoPorProducto();
         receta.setProducto(producto);
         receta.setInsumo(insumo);
         receta.setStockNecesarioInsumo(request.getInsumo().getCantidadNecesaria());
         receta.setUnidad(insumo.getUnidad());
 
-        // 4️⃣ Guardar en DB
         return recetaDao.save(receta);
     }
 
     @Override
     public List<InsumoNecesarioResponse> calcularInsumosNecesarios(String codigoProducto, BigDecimal cantidadProducto) {
-        // 1️⃣ Buscar producto por código
         Producto producto = productosDao.findByCodigo(codigoProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
-        // 2️⃣ Obtener todas las recetas (insumos necesarios) para ese producto
         List<InsumoPorProducto> recetas = recetaDao.findByProductoId(producto.getId());
-
-        // 3️⃣ Calcular cantidad total necesaria por insumo
         return recetas.stream()
                 .map(r -> new InsumoNecesarioResponse(
                         r.getInsumo().getCodigo(),
@@ -69,4 +60,15 @@ public class InsumoPorProductoServiceImpl implements InsumoPorProductoService {
                 ))
                 .collect(Collectors.toList());
     }
+
+	@Override
+	public void eliminarInsumo(String codigoProducto, String codigoInsumo) {
+		Insumo insumo = insumosDao.findByCodigo(codigoInsumo).orElseThrow(() -> new IllegalArgumentException("Insumo no encontrado"));
+		Producto producto = productosDao.findByCodigo(codigoProducto)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+		
+		InsumoPorProducto insumoReceta = recetaDao.findFirstByInsumoIdAndProductoId(insumo.getId(),producto.getId());
+		
+		recetaDao.delete(insumoReceta);
+	}
 }

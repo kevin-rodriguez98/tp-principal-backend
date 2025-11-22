@@ -8,4 +8,5 @@ import java.util.List;
 public interface InsumoPorProductoDao extends JpaRepository<InsumoPorProducto, Integer> {
 
     List<InsumoPorProducto> findByProductoId(Integer idProducto);
+    InsumoPorProducto findFirstByInsumoIdAndProductoId(Integer idInsumo, Integer idProducto);
 }
