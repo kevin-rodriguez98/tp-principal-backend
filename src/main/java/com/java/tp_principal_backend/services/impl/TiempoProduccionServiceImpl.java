@@ -76,32 +76,6 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
 
 	@Override
 	public BigDecimal obtenertiemposProduccion(String codigoProducto) {
-		/* OrdenProduccion orden = ordenDao.findByCodigoProducto(codigoProducto)
-	                .orElseThrow(() -> new EntityNotFoundException(
-	                        "No se encontró la orden asociada al producto: " + codigoProducto));
-
-	        BigDecimal stockOrden = orden.getStockRequerido();
-
-	        String unidad = orden.getPresentacion();
-	        if (unidad == null) unidad = "Kilos";
-
-	        // Conversión a KG
-	        if (unidad.equalsIgnoreCase("Gramos")) {
-	            stockOrden = stockOrden.divide(BigDecimal.valueOf(1000), 3, RoundingMode.HALF_UP);
-	        }
-
-	        // Capacidad por tanda
-	        BigDecimal capacidad = BigDecimal.valueOf(500);
-
-	        // Cantidad de tandas
-	        BigDecimal multiplyFor = stockOrden.divide(capacidad, 0, RoundingMode.CEILING);
-
-	        // Tiempo base total
-	        Integer tiempoBase = tiempoDao.sumAllTiempos();
-	        if (tiempoBase == null) tiempoBase = 0;
-
-	        return BigDecimal.valueOf(tiempoBase)
-	                .multiply(multiplyFor);*/
 		return BigDecimal.ZERO;
 	}
     

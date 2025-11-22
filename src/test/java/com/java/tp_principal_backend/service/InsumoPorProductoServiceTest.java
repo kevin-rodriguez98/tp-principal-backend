@@ -1,8 +1,11 @@
 package com.java.tp_principal_backend.service;
 
+import com.java.tp_principal_backend.dto.InsumoNecesarioResponse;
 import com.java.tp_principal_backend.dto.InsumoPorProductoRequest;
+import com.java.tp_principal_backend.dto.InsumoRecetaDTO;
 import com.java.tp_principal_backend.model.Producto;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,150 +21,165 @@ import com.java.tp_principal_backend.data.InsumosDao;
 import com.java.tp_principal_backend.data.ProductosDao;
 import com.java.tp_principal_backend.services.impl.InsumoPorProductoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@Disabled
+@ExtendWith(MockitoExtension.class)
 public class InsumoPorProductoServiceTest {
 
-    @Mock
-    private InsumoPorProductoDao recetaRepo;
+	 @InjectMocks
+	    private InsumoPorProductoServiceImpl service;
 
-    @Mock
-    private ProductosDao productosDao;
+	    @Mock
+	    private InsumoPorProductoDao recetaDao;
 
-    @Mock
-    private InsumosDao insumosDao;
+	    @Mock
+	    private ProductosDao productosDao;
 
-    @InjectMocks
-    private InsumoPorProductoServiceImpl recetaService;
+	    @Mock
+	    private InsumosDao insumosDao;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+	    private Producto producto;
+	    private Insumo insumo;
+	    private InsumoPorProducto receta;
 
-    // 🔹 Test exitoso
-    @Test
-    void agregarReceta_debeGuardarRecetaCorrectamente() {
-        // Datos de prueba
-        InsumoPorProductoRequest request = new InsumoPorProductoRequest();
-        request.setCodigoProducto("P001");
-        request.getInsumo().setCodigoInsumo("I002");
-        request.getInsumo().setCantidadNecesaria(BigDecimal.valueOf(0.5));
+	    @BeforeEach
+	    void setup() {
+	        producto = new Producto();
+	        producto.setId(1);
+	        producto.setCodigo("P001");
+	        producto.setNombre("Dulce de leche");
 
-        Producto producto = new Producto();
-        producto.setId(1);
-        producto.setCodigo("P001");
+	        insumo = new Insumo();
+	        insumo.setId(10);
+	        insumo.setCodigo("I001");
+	        insumo.setNombre("Leche");
+	        insumo.setUnidad("L");
 
-        Insumo insumo = new Insumo();
-        insumo.setId(2);
-        insumo.setCodigo("I002");
+	        receta = new InsumoPorProducto();
+	        receta.setId(100);
+	        receta.setProducto(producto);
+	        receta.setInsumo(insumo);
+	        receta.setStockNecesarioInsumo(BigDecimal.valueOf(2));
+	        receta.setUnidad("L");
+	    }
 
-        // Mockear búsqueda de producto e insumo
-        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
-        when(insumosDao.findByCodigo("I002")).thenReturn(Optional.of(insumo));
+	    @Test
+	    void agregarReceta_ok() {
+	    	InsumoRecetaDTO insumoReq = new InsumoRecetaDTO();
+	        insumoReq.setCodigoInsumo("I001");
+	        insumoReq.setCantidadNecesaria(BigDecimal.valueOf(3));
 
-        // Mockear guardado en la DB
-        when(recetaRepo.save(any(InsumoPorProducto.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+	        InsumoPorProductoRequest req = new InsumoPorProductoRequest();
+	        req.setCodigoProducto("P001");
+	        req.setInsumo(insumoReq);
 
-        // Ejecutar método
-        InsumoPorProducto resultado = recetaService.agregarReceta(request);
+	        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
+	        when(insumosDao.findByCodigo("I001")).thenReturn(Optional.of(insumo));
+	        when(recetaDao.save(any(InsumoPorProducto.class))).thenReturn(receta);
 
-        // Verificaciones
-        assertEquals(producto, resultado.getProducto());
-        assertEquals(insumo, resultado.getInsumo());
-        assertEquals(BigDecimal.valueOf(0.5), resultado.getStockNecesarioInsumo());
+	        InsumoPorProducto result = service.agregarReceta(req);
 
-        verify(productosDao, times(1)).findByCodigo("P001");
-        verify(insumosDao, times(1)).findByCodigo("I002");
-        verify(recetaRepo, times(1)).save(any(InsumoPorProducto.class));
-    }
+	        assertEquals(producto, result.getProducto());
+	        assertEquals(insumo, result.getInsumo());
+	        assertEquals(BigDecimal.valueOf(2), result.getStockNecesarioInsumo());
+	        verify(recetaDao).save(any(InsumoPorProducto.class));
+	    }
 
-    // 🔹 Test producto no encontrado
-    @Test
-    void agregarReceta_debeLanzarExcepcionSiProductoNoExiste() {
-        InsumoPorProductoRequest request = new InsumoPorProductoRequest();
-        request.setCodigoProducto("P999");
-        request.getInsumo().setCodigoInsumo("I001");
-        request.getInsumo().setCantidadNecesaria(BigDecimal.ONE);
+	    @Test
+	    void agregarReceta_productoNoEncontrado() {
+	    	InsumoRecetaDTO insumoReq = new InsumoRecetaDTO();
+	        insumoReq.setCodigoInsumo("I001");
+	        insumoReq.setCantidadNecesaria(BigDecimal.ONE);
 
-        when(productosDao.findByCodigo("P999")).thenReturn(Optional.empty());
+	        InsumoPorProductoRequest req = new InsumoPorProductoRequest();
+	        req.setCodigoProducto("PX");
+	        req.setInsumo(insumoReq);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> recetaService.agregarReceta(request));
+	        when(productosDao.findByCodigo("PX")).thenReturn(Optional.empty());
 
-        assertEquals("Producto no encontrado", ex.getMessage());
-        verify(recetaRepo, never()).save(any());
-    }
+	        assertThrows(IllegalArgumentException.class, () -> service.agregarReceta(req));
+	        verify(insumosDao, never()).findByCodigo(anyString());
+	        verify(recetaDao, never()).save(any());
+	    }
 
-    // 🔹 Test insumo no encontrado
-    @Test
-    void agregarReceta_debeLanzarExcepcionSiInsumoNoExiste() {
-        InsumoPorProductoRequest request = new InsumoPorProductoRequest();
-        request.setCodigoProducto("P001");
-        request.getInsumo().setCodigoInsumo("I999");
-        request.getInsumo().setCantidadNecesaria(BigDecimal.ONE);
+	    @Test
+	    void agregarReceta_insumoNoEncontrado() {
+	    	InsumoRecetaDTO insumoReq = new InsumoRecetaDTO();
+	        insumoReq.setCodigoInsumo("IX");
+	        insumoReq.setCantidadNecesaria(BigDecimal.ONE);
 
-        Producto producto = new Producto();
-        producto.setCodigo("P001");
-        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
-        when(insumosDao.findByCodigo("I999")).thenReturn(Optional.empty());
+	        InsumoPorProductoRequest req = new InsumoPorProductoRequest();
+	        req.setCodigoProducto("P001");
+	        req.setInsumo(insumoReq);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> recetaService.agregarReceta(request));
+	        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
+	        when(insumosDao.findByCodigo("IX")).thenReturn(Optional.empty());
 
-        assertEquals("Insumo no encontrado", ex.getMessage());
-        verify(recetaRepo, never()).save(any());
-    }
+	        assertThrows(IllegalArgumentException.class, () -> service.agregarReceta(req));
+	        verify(recetaDao, never()).save(any());
+	    }
 
-    @Disabled
-    @Test
-    void calcularInsumosNecesarios_ProductoExistente_RetornaCantidades() {
-        // Datos de prueba
-        String codigoProducto = "PROD123";
-        BigDecimal cantidadProducto = new BigDecimal("2");
+	    @Test
+	    void calcularInsumosNecesarios_ok() {
+	        producto.setId(1);
+	        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
+	        when(recetaDao.findByProductoId(1)).thenReturn(List.of(receta));
 
-        Producto producto = new Producto();
-        producto.setId(1);
-        producto.setCodigo(codigoProducto);
-        producto.setNombre("Producto Test");
+	        List<InsumoNecesarioResponse> result =
+	                service.calcularInsumosNecesarios("P001", BigDecimal.TEN);
 
-        Insumo insumo1 = new Insumo();
-        insumo1.setCodigo("INS001");
-        insumo1.setNombre("Insumo 1");
+	        assertEquals(1, result.size());
+	        InsumoNecesarioResponse r = result.get(0);
+	        assertEquals("I001", r.getCodigoInsumo());
+	        assertEquals("Leche", r.getNombreInsumo());
+	        assertEquals(receta.getStockNecesarioInsumo(), r.getCantidadNecesaria());
+	        assertEquals("L", r.getUnidad());
+	    }
 
-        Insumo insumo2 = new Insumo();
-        insumo2.setCodigo("INS002");
-        insumo2.setNombre("Insumo 2");
+	    @Test
+	    void calcularInsumosNecesarios_productoNoEncontrado() {
+	        when(productosDao.findByCodigo("PX")).thenReturn(Optional.empty());
 
-        // Stock necesario está en InsumoPorProducto
-        InsumoPorProducto receta1 = new InsumoPorProducto();
-        receta1.setProducto(producto);
-        receta1.setInsumo(insumo1);
-        receta1.setStockNecesarioInsumo(new BigDecimal("3"));
+	        assertThrows(IllegalArgumentException.class,
+	                () -> service.calcularInsumosNecesarios("PX", BigDecimal.ONE));
+	        verify(recetaDao, never()).findByProductoId(any());
+	    }
 
-        InsumoPorProducto receta2 = new InsumoPorProducto();
-        receta2.setProducto(producto);
-        receta2.setInsumo(insumo2);
-        receta2.setStockNecesarioInsumo(new BigDecimal("7"));
+	    @Test
+	    void eliminarInsumo_ok() {
+	        producto.setId(1);
+	        insumo.setId(10);
 
-        // Mockear repositorios
-        when(productosDao.findByCodigo(codigoProducto)).thenReturn(Optional.of(producto));
-        when(recetaRepo.findByProductoId(producto.getId())).thenReturn(List.of(receta1, receta2));
+	        when(insumosDao.findByCodigo("I001")).thenReturn(Optional.of(insumo));
+	        when(productosDao.findByCodigo("P001")).thenReturn(Optional.of(producto));
+	        when(recetaDao.findFirstByInsumoIdAndProductoId(10, 1)).thenReturn(receta);
 
-        // Ejecutar método
-        var resultados = recetaService.calcularInsumosNecesarios(codigoProducto, cantidadProducto);
+	        service.eliminarInsumo("P001", "I001");
 
-        // Verificar resultados
-        assertEquals(2, resultados.size());
-        assertEquals(new BigDecimal("6"), resultados.get(0).getCantidadNecesaria()); // 3 * 2
-        assertEquals(new BigDecimal("14"), resultados.get(1).getCantidadNecesaria()); // 7 * 2
+	        verify(recetaDao, times(1)).delete(receta);
+	    }
 
-        verify(productosDao, times(1)).findByCodigo(codigoProducto);
-        verify(recetaRepo, times(1)).findByProductoId(producto.getId());
-    }
+	    @Test
+	    void eliminarInsumo_insumoNoEncontrado() {
+	        when(insumosDao.findByCodigo("IX")).thenReturn(Optional.empty());
+
+	        assertThrows(IllegalArgumentException.class,
+	                () -> service.eliminarInsumo("P001", "IX"));
+
+	        verify(productosDao, never()).findByCodigo(anyString());
+	        verify(recetaDao, never()).delete(any());
+	    }
+
+	    @Test
+	    void eliminarInsumo_productoNoEncontrado() {
+	        when(insumosDao.findByCodigo("I001")).thenReturn(Optional.of(insumo));
+	        when(productosDao.findByCodigo("PX")).thenReturn(Optional.empty());
+
+	        assertThrows(IllegalArgumentException.class,
+	                () -> service.eliminarInsumo("PX", "I001"));
+
+	        verify(recetaDao, never()).delete(any());
+	    }
 }
