@@ -72,6 +72,8 @@ public class EmpleadosServiceImpl implements EmpleadoService{
 	@Override
 	public EmpleadoResponse modificarPasword(LoginRequest loginRequest) {
 		Empleados empleado = empleadoDao.buscarPorLegajo(loginRequest.getLegajo());
+		if(empleado.getIsPrimerIngreso().equals(Boolean.TRUE))
+			empleado.setIsPrimerIngreso(Boolean.FALSE);
 		empleado.setPassword(loginRequest.getPassword());
 		empleadoDao.save(empleado);
 		return new EmpleadoResponse(empleado);

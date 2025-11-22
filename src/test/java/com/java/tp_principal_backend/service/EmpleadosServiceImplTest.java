@@ -43,6 +43,7 @@ class EmpleadosServiceImplTest {
         empleado.setArea("produccion");
         empleado.setRol("operario");
         empleado.setPassword("100");
+        empleado.setIsPrimerIngreso(Boolean.TRUE);
 
         request = new EmpleadoRequest();
         request.setLegajo("100");
