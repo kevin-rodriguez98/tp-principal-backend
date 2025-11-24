@@ -54,7 +54,7 @@ public class TiempoProduccionServiceImpl implements TiempoProduccionService {
         if(cantidad.compareTo(tiempo.getCantidaTanda()) == -1) {
         	tandas = BigDecimal.ONE;
         }else
-        	tandas = cantidad.divide(tiempo.getCantidaTanda());
+        	tandas = cantidad.divide(tiempo.getCantidaTanda(),2, RoundingMode.HALF_UP);
       
         BigDecimal tiempoProduccionTanda = tiempo.getCantidaTanda().multiply(tiempo.getTiempoCiclo());
         BigDecimal tiempoCalculado =  tiempo.getTiempoPreparacion().add(tandas.multiply(tiempoProduccionTanda));
