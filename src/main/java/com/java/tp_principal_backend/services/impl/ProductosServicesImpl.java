@@ -77,6 +77,7 @@ public class ProductosServicesImpl implements ProductosServices {
                 case "marca" -> producto.setLinea((String) valor);
                 case "unidad" -> producto.setUnidad((String) valor);
                 case "stock" -> producto.setStock(new BigDecimal(valor.toString()));
+                case "presentacion" -> producto.setPresentacion((String)valor);
                 case "codigo" -> {
                     String nuevoCodigo = (String) valor;
 
