@@ -130,7 +130,7 @@ public class MovimientoProductoServiceTest {
         when(movimientoDao.save(any(MovimientoProducto.class)))
                 .thenReturn(movimientoGuardado);
 
-        MovimientoProducto result = service.egresoAutomatico("P001", cantidad, "DEP01", "L001");
+        MovimientoProducto result = service.egresoAutomatico("P001", cantidad, "DEP01", "L001","100");
 
         assertEquals("P001", result.getCodigoProducto());
         assertEquals(cantidad, result.getCantidad());
@@ -151,7 +151,7 @@ public class MovimientoProductoServiceTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> service.egresoAutomatico("P999", BigDecimal.ONE, "DEP", "L001")
+                () -> service.egresoAutomatico("P999", BigDecimal.ONE, "DEP", "L001","100")
         );
 
         assertEquals("Producto no encontrado", ex.getMessage());

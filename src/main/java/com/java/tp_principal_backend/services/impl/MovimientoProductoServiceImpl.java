@@ -56,7 +56,7 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
 
     @Override
     @Transactional
-    public MovimientoProducto egresoAutomatico(String codigoProducto, BigDecimal cantidad, String destino, String lote) {
+    public MovimientoProducto egresoAutomatico(String codigoProducto, BigDecimal cantidad, String destino, String lote,String legajo) {
         Producto producto = productosDao.findByCodigo(codigoProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
@@ -65,9 +65,9 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
         MovimientoProducto movimiento = new MovimientoProducto();
         movimiento.setCodigoProducto(codigoProducto);
         movimiento.setCantidad(cantidad);
-        movimiento.setTipo("egreso");
+        movimiento.setTipo("EGRESO");
         movimiento.setImpactado(impactado);
-        movimiento.setDestino(destino);
+        movimiento.setDestino(destino.toUpperCase());
         movimiento.setCreationUsername("");
         movimiento.setFecha(LocalDateTime.now());
         movimiento.setCategoria(producto.getCategoria());
@@ -75,6 +75,7 @@ public class MovimientoProductoServiceImpl implements MovimientoProductoService 
         movimiento.setUnidad(producto.getUnidad());
         movimiento.setLote(lote);
         movimiento.setNombre(producto.getNombre());
+        movimiento.setEmpleado(legajo);
 
         return movimientoDao.save(movimiento);
     }

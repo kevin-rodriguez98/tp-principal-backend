@@ -57,7 +57,7 @@ public class OrdenProduccionServiceImpl implements OrdenProduccionService {
         	ordenFinalizada.setStockProducidoReal(orden.getStockRequerido());
         }
         orden.setStockProducidoReal(ordenFinalizada.getStockProducidoReal());
-        movimientoProductoService.egresoAutomatico(orden.getCodigoProducto(), ordenFinalizada.getStockProducidoReal(), ordenFinalizada.getDestino(),orden.getLote());
+        movimientoProductoService.egresoAutomatico(orden.getCodigoProducto(), ordenFinalizada.getStockProducidoReal(), ordenFinalizada.getDestino(),orden.getLote(),ordenFinalizada.getLegajo());
         if (producto.getStock() == null) {
             producto.setStock(BigDecimal.ZERO);
         }

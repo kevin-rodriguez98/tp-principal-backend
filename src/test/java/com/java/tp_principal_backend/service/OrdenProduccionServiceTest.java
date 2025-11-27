@@ -114,7 +114,7 @@ public class OrdenProduccionServiceTest {
         assertEquals(BigDecimal.TEN, producto.getStock());
         verify(historialEtapaDao, times(1)).save(any());
         verify(movimientoProductoService, times(1))
-                .egresoAutomatico(any(), any(), any(), any());
+                .egresoAutomatico(any(), any(), any(), any(),any());
     }
 
     // ------------------------------------------------------------

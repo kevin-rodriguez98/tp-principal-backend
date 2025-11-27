@@ -21,11 +21,11 @@ public class EmpleadosServiceImpl implements EmpleadoService{
 	@Override
 	public EmpleadoResponse agregarEmpleado(EmpleadoRequest empleado) {
 		Empleados empleadoNuevo = new Empleados();
-		empleadoNuevo.setNombre(empleado.getNombre().toLowerCase());
-		empleadoNuevo.setApellido(empleado.getApellido().toLowerCase());
+		empleadoNuevo.setNombre(empleado.getNombre().toUpperCase());
+		empleadoNuevo.setApellido(empleado.getApellido().toUpperCase());
 		empleadoNuevo.setLegajo(empleado.getLegajo());
-		empleadoNuevo.setArea(empleado.getArea().toLowerCase());
-		empleadoNuevo.setRol(empleado.getRol().toLowerCase());
+		empleadoNuevo.setArea(empleado.getArea().toUpperCase());
+		empleadoNuevo.setRol(empleado.getRol().toUpperCase());
 		empleadoNuevo.setPassword(empleado.getLegajo());
 		empleadoNuevo.setIsPrimerIngreso(true);
 		return new EmpleadoResponse(empleadoDao.save(empleadoNuevo));
